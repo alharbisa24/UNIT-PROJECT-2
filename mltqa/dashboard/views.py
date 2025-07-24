@@ -2,6 +2,7 @@ import random
 from django.shortcuts import render,redirect
 from django.http import HttpRequest
 from . import forms,models
+from home import models as HomeModels
 from dotenv import dotenv_values
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
@@ -47,17 +48,20 @@ def dashboard_login_view(request:HttpRequest):
 
 
 def dashboard_home_view(request:HttpRequest):
+    import platform, time
+    print("Platform:", platform.platform())
+    print("Current Time:", time.ctime())
     if not 'admin' in request.COOKIES:
         return redirect('dashboard:dashboard_login_view')
     
     admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
-    number_of_new_requests = models.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).count()
+    number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     total_events = models.Event.objects.count()
     total_active_events = models.Event.objects.filter(is_active=True).count()
     total_expired_events = models.Event.objects.filter(is_active=False).count()
-    total_users= models.Request.objects.count()
-    total_requests = models.Request.objects.count()
-    total_admins= models.Request.objects.count()    
+    total_users= HomeModels.Request.objects.count()
+    total_requests = HomeModels.Request.objects.count()
+    total_admins= HomeModels.Request.objects.count()    
 
 
 
@@ -143,12 +147,11 @@ def dashboard_events_view(request:HttpRequest):
         events = models.Event.objects.all()
 
     for event in events:
-        for event in events:
-            event.created_at_ar = format_arabic_hijri_with_time(event.created_at)
-            event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
-            event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
+        event.created_at_ar = format_arabic_hijri_with_time(event.created_at)
+        event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
+        event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
 
-    number_of_new_requests = models.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).count()
+    number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     return render(request, 'dashboard/panel/events.html',{
                 "admin": admin,
                 'events' : events,
@@ -159,18 +162,108 @@ def dashboard_events_view(request:HttpRequest):
     })
 
 
+
+
 def dashboard_requests_view(request:HttpRequest):
+    if not 'admin' in request.COOKIES:
+        return redirect('dashboard:dashboard_login_view')
+    events =  models.Event.objects.all()
+    if "search" in request.GET:
+        requests = HomeModels.Request.objects.filter(user__full_name__contains=request.GET["search"])
+    else:
+        requests = HomeModels.Request.objects.all()
+    
+    if "event" in request.GET:
+        requests = requests.filter(event__id__contains=request.GET["event"])
+    
+    deleted = request.GET.get('deleted', "false")
+    accepted = request.GET.get('accepted', "False")
+    data_summary = { 
+        "all": requests.count(),
+        "new": requests.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count(),
+        "accepted": requests.filter(status='accepted').count(),
+        "rejected": requests.filter(status='rejected').count(),
+
+    }
+    for req in requests:
+            req.event.startdate_ar = format_arabic_hijri_with_time(req.event.start_datetime)
+            req.event.enddate_ar = format_arabic_hijri_with_time(req.event.end_datetime)
+
     if request.POST:
         pass
     admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
-    number_of_new_requests = models.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).count()
+    number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     return render(request, "dashboard/panel/requests.html",{
                 "admin": admin,
+                "events":events,
+                "requests":requests,
+                "deleted":deleted,
+                "accepted":accepted,
+                "data_summary":data_summary,
                 "number_of_new_requests": number_of_new_requests
+
 
     })
 
+
+
+def dashboard_request_delete_view(request:HttpRequest,id:int):
+    req = HomeModels.Request.objects.get(pk=id)
+
+    if req:
+        req.delete()
+        return redirect('/dashboard/requests/?deleted=True')
+
+
+
+def dashboard_request_accept_view(request:HttpRequest, id:int):
+    req = HomeModels.Request.objects.get(pk=id)
+    if req:
+        req.status='accepted'
+        req.save()
+        return redirect('/dashboard/requests/?accepted=True')
+
+
+def dashboard_ratings_view(request:HttpRequest):
+    if not 'admin' in request.COOKIES:
+        return redirect('dashboard:dashboard_login_view')
+    pass
+
+
+def dashboard_users_view(request:HttpRequest):
+    if not 'admin' in request.COOKIES:
+        return redirect('dashboard:dashboard_login_view')
+    success = False
+ 
+    if "search" in request.GET and len(request.GET["search"]) >= 3:
+        users = HomeModels.User.objects.filter(full_name__contains=request.GET["search"])
+    else:
+        try:
+            users = HomeModels.User.objects.all()
+        except HomeModels.User.DoesNotExist:
+            print("error")
+
+    admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+    number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
+    deleted = request.GET.get('deleted', "false")
+    return render(request, "dashboard/panel/users.html",{
+        "users": users,
+        "admin": admin,
+        "deleted":deleted,
+        "number_of_new_requests": number_of_new_requests
+    })
+
+def dashboard_users_delete_view(request:HttpRequest,id:int):
+    user = HomeModels.User.objects.get(pk=id)
+
+    if user:
+        user.delete()
+        return redirect('/dashboard/users/?deleted=True')
+
+
 def dashboard_admins_view(request: HttpRequest):
+    if not 'admin' in request.COOKIES:
+        return redirect('dashboard:dashboard_login_view')
     success = False
  
     if request.method == "POST":
@@ -202,10 +295,13 @@ def dashboard_admins_view(request: HttpRequest):
     if "search" in request.GET and len(request.GET["search"]) >= 3:
         admins = models.Admin.objects.filter(full_name__contains=request.GET["search"])
     else:
-        admins = models.Admin.objects.all()
+        try:
+            admins = models.Admin.objects.all()
+        except models.Admin.DoesNotExist:
+            print("error")
 
     admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
-    number_of_new_requests = models.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).count()
+    number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     return render(request, "dashboard/panel/admins.html", {
         'admins' : admins,
         'form': form,
@@ -234,7 +330,7 @@ def dashboard_event_edit_view(request:HttpRequest, id:int):
         form = forms.EventForm()
         if event:
             admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
-            number_of_new_requests = models.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).count()
+            number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
             if request.method == "POST":
                     form = forms.EventForm(request.POST, request.FILES)
                     
@@ -311,6 +407,8 @@ def dashboard_admin_delete_view(request:HttpRequest,id:int):
     if admin:
         admin.delete()
         return redirect('dashboard:dashboard_admins_view')
+
+
 
 
 

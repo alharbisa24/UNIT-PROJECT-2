@@ -1,0 +1,163 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %} ملتقى - تفاصيل الفعالية {% endblock %}
+
+{% block content %} 
+
+<div class="bg-gradient-to-br from-blue-900 to-blue-950 text-white py-12 px-6 rounded-3xl shadow-lg mb-8">
+  <div class="container mx-auto max-w-5xl text-center">
+      <h1 class="text-3xl lg:text-4xl font-bold mb-4">سجل الحضور</h1>
+      <p class="text-blue-100">سجل طلباتك لحضور الفعاليات </p>
+      <br>
+  
+        
+      
+  </div>
+</div>
+
+<div class="container mx-auto max-w-5xl px-6 pb-16">
+  <div class="space-y-6">
+    {% if requests %}
+    {% for request in requests %}
+      <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
+          <div class="flex flex-col md:flex-row">
+              <div class="w-full md:w-1/4 h-48 md:h-auto relative">
+                  <img src="{{request.event.image_url}}" alt="{{request.event.title}}" class="w-full h-full object-cover">
+               
+              </div>
+              
+              <div class="w-full md:w-3/4 p-6">
+                  <div class="flex justify-between items-start">
+                      <div>
+                          <h2 class="text-xl font-bold text-gray-800 mb-2">{{request.event.title}}</h2>
+                          <div class="flex items-center text-gray-600 mb-4 text-sm">
+                              <i class="far fa-calendar-alt ml-2"></i>
+                              <span>{{request.event.dateperiod}}</span>
+                              <span class="mx-2">•</span>
+                              <i class="far fa-clock ml-2"></i>
+                              <span>{{request.event.timeperiod}}</span>
+                          </div>
+                      </div>
+                        <div>
+                          {% if request.status == 'waiting' %}
+                          <span class="bg-yellow-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">بانتظار الرد</span>
+                          {%elif request.status == 'accepted'  %}
+                          <span class="bg-green-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">مقبول</span>
+                          {%elif request.status == 'rejected'  %}
+                          <span class="bg-red-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">مرفوض</span>
+                          {% elif request.status == 'attend'  %}
+                          <span class="bg-blue-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">تم الحضور</span>
+                          {% endif %}
+                        </div>
+                  </div>
+                  
+                  {% if request.request_rating %}
+                  <div class="border-t border-gray-100 mt-4 pt-4">
+                      <div class="flex items-center justify-between">
+                          <span class="text-gray-700 font-medium">تقييمك للفعالية</span>
+                          <div class="flex">
+                              <span class="text-yellow-400 flex">
+                                  <i class="fas fa-star"></i>
+                                  <i class="fas fa-star"></i>
+                                  <i class="fas fa-star"></i>
+                                  <i class="fas fa-star"></i>
+                                  <i class="far fa-star text-gray-300"></i>
+                              </span>
+                              <span class="text-gray-600 text-sm mr-2">(4/5)</span>
+                          </div>
+                      </div>
+                      <p class="text-gray-600 mt-2 text-sm">كانت الورشة ممتازة واستفدت منها كثيرًا! المدرب كان محترف جدًا في شرح المفاهيم الأساسية.</p>
+                  </div>
+                  {%elif request.status == 'attend' and not request.request_rating %}
+                  <div class="border-t border-gray-100 mt-4 pt-4">
+                    <form>
+                        <div class="mb-3">
+                            <label class="block text-gray-700 font-medium mb-2">تقييمك للفعالية</label>
+                            <div class="flex text-2xl cursor-pointer">
+                                <i class="far fa-star text-yellow-400 hover:text-yellow-500 transition-all"></i>
+                                <i class="far fa-star text-yellow-400 hover:text-yellow-500 transition-all"></i>
+                                <i class="far fa-star text-yellow-400 hover:text-yellow-500 transition-all"></i>
+                                <i class="far fa-star text-yellow-400 hover:text-yellow-500 transition-all"></i>
+                                <i class="far fa-star text-yellow-400 hover:text-yellow-500 transition-all"></i>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="review" class="block text-gray-700 font-medium mb-2">تعليقك</label>
+                            <textarea id="review" rows="3" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="شاركنا تجربتك في هذه الفعالية..."></textarea>
+                        </div>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">إرسال التقييم</button>
+                    </form>
+                </div>
+                {%elif request.status == 'waiting' %}
+                <p class="text-yellow-600 text-sm">طلبك قيد المراجعة</p>
+
+
+                {%elif request.status == 'rejected' %}
+                <p class="text-red-600 text-sm">تم رفض طلبك بسبب اكتمال العدد .</p>
+
+                {%elif request.status == 'accepted' %}
+                <div class="border-t border-gray-100 mt-4 pt-4">
+                  <div class="flex items-center">
+                      <i class="fas fa-info-circle text-blue-500 ml-2"></i>
+                      <p class="text-gray-600 text-sm">تم قبول طلبك</p>
+                  </div>
+                  <div class="pt-2 flex items-center gap-4">
+                      <a href="#" class="text-blue-600 hover:text-blue-800 flex items-center text-sm mr-6">
+                          <i class="fas fa-calendar-plus ml-2"></i> اضافة للتقويم
+                      </a>
+                      <a href="#" class="text-red-600 hover:text-red-800 flex items-center text-sm">
+                          <i class="fas fa-times-circle ml-2"></i> الغاء الطلب
+                      </a>
+                  </div>
+              </div>
+                  {%endif%}
+
+                
+
+
+
+              </div>
+          </div>
+      </div>
+      
+      {% endfor %}
+      {%else %}
+
+      <div class=" bg-white rounded-2xl shadow-md p-12 text-center border border-gray-100">
+        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fas fa-ticket-alt text-blue-600 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">لا توجد طلبات حتى الآن</h3>
+        <p class="text-gray-600 mb-6">لايوجد طلبات مقدمة منك لحضور فعاليات</p>
+        <a href="/" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all inline-block">استعرض الفعاليات </a>
+    </div>
+
+    {% endif %}
+   
+    
+  </div>
+  
+
+</div>
+
+<!-- Rating Stars Script -->
+<script>
+  // Simple star rating functionality
+  document.addEventListener('DOMContentLoaded', function() {
+      const stars = document.querySelectorAll('.far.fa-star');
+      stars.forEach((star, index) => {
+          star.addEventListener('click', () => {
+              // Reset all stars
+              stars.forEach(s => s.className = 'far fa-star text-yellow-400 hover:text-yellow-500 transition-all');
+              
+              // Fill clicked star and all before it
+              for(let i = 0; i <= index; i++) {
+                  stars[i].className = 'fas fa-star text-yellow-400 hover:text-yellow-500 transition-all';
+              }
+          });
+      });
+  });
+</script>
+
+{% endblock %}

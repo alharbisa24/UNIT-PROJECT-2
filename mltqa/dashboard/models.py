@@ -24,19 +24,5 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
-    
 
 
-class Request(models.Model):
-    full_name=models.CharField(max_length=50)
-    email=models.CharField(max_length=50)
-    phone=models.CharField(max_length=50)
-    created_at = models.DateTimeField(auto_now_add=True)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='tickets')
-    accept_status = models.BooleanField(default=False)
-    is_attend = models.BooleanField(default=False)
-
-
- 
-    def __str__(self):
-        return self.full_name   

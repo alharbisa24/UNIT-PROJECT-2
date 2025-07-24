@@ -11,5 +11,6 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred, {
         'storageBucket': 'mltqa-9864c.firebasestorage.app' 
     })
+    
 
 bucket = storage.bucket()

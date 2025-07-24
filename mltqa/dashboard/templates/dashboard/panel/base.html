@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>{% block title %}لوحة التحكم{% endblock %}</title>
+    <title>{% block title %} {% endblock %}</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://kit.fontawesome.com/d430c26570.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,7 +73,28 @@
                 <span class="ml-auto bg-cyan-100 text-cyan-700 text-xs px-2 py-0.5 rounded-full dark:bg-cyan-900/20 dark:text-cyan-300">{{number_of_new_requests}}</span>
 
             </a>
-            
+            <a href="{% url 'dashboard:dashboard_ratings_view' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
+            {% if request.path == '/dashboard/ratings/' %}
+                text-cyan-700 bg-cyan-50 dark:bg-cyan-900/20 dark:text-cyan-300
+            {% else %}
+                text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800
+            {% endif %}">
+                <i class="fas fa-comment w-5 {% if request.path == '/dashboard/ratings/' %}text-cyan-600 dark:text-cyan-400{% else %}text-gray-400 dark:text-gray-500{% endif %}"></i>
+                <span>التقييمات</span>
+
+            </a>
+
+            <a href="{% url 'dashboard:dashboard_users_view' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
+            {% if request.path == '/dashboard/users/' %}
+                text-cyan-700 bg-cyan-50 dark:bg-cyan-900/20 dark:text-cyan-300
+            {% else %}
+                text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800
+            {% endif %}">
+                <i class="fas fa-users w-5 {% if request.path == '/dashboard/users/' %}text-cyan-600 dark:text-cyan-400{% else %}text-gray-400 dark:text-gray-500{% endif %}"></i>
+                <span>المستخدمين</span>
+
+            </a>
+        
             <a href="{% url 'dashboard:dashboard_admins_view' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
             {% if request.path == '/dashboard/admins/' %}
                 text-cyan-700 bg-cyan-50 dark:bg-cyan-900/20 dark:text-cyan-300

@@ -9,6 +9,7 @@ class AdminForm(forms.Form):
         },)
     email = forms.EmailField(max_length=50,
                              error_messages={
+            "invalid": "يرجى ادخال بريد الكتروني صحيح",
             'required': 'يجب ادخال الايميل',
             'max_length': 'يجب ادخال الايميل بشكل صحيح',
         },)

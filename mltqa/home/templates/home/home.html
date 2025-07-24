@@ -27,22 +27,30 @@
         والعديد من الأنشطة والورش التي تساعدك على تطوير مهاراتك التقنية والتواصل مع خبراء المجال.
         </p>
   
-      
-        <div class="flex flex-wrap gap-4 justify-center">
-          <a href="#" class="group inline-flex items-center gap-2 bg-blue-600 text-white text-base font-medium px-6 py-3 rounded-lg hover:bg-blue-500 transition-all">
-            <span>استكشف الفعاليات</span>
-            <i class="fas fa-arrow-left transform group-hover:-translate-x-1 transition-transform"></i>
+        {% if 'user' not in request.COOKIES %}
+    <div class="flex flex-wrap gap-4 justify-center">
+        <a href="{% url 'home:register_view' %}" class="group inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-base font-medium px-8 py-3 rounded-full shadow-lg hover:from-green-600 hover:to-green-700 transition-all">
+        <span>انشاء حساب</span>
+        <i class="fas fa-user-plus transform group-hover:-translate-x-1 transition-transform"></i>
+        </a>
+        <a href="{% url 'home:login_view' %}" class="group inline-flex items-center gap-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-base font-medium px-8 py-3 rounded-full shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-all">
+        <span>تسجيل الدخول</span>
+        <i class="fas fa-sign-in-alt transform group-hover:-translate-x-1 transition-transform"></i>
+        </a>
+    </div>
+    {% endif %}
 
-          </a>
-   
-        </div>
-        
+    <br>
+    <a href="#events" class="group inline-flex items-center gap-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-base font-medium px-8 py-3 rounded-full shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all">
+        <span>استكشف الفعاليات</span>
+        <i class="fas fa-arrow-left transform group-hover:-translate-x-1 transition-transform"></i>
+    </a>
         
       </div>
     </div>
   </section>
 
-<section class="py-20 bg-gray-50">
+<section class="py-20 bg-gray-50" id="events">
     <div class="container mx-auto px-6 relative">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
             <div>
@@ -55,6 +63,7 @@
             </a>
         </div>
  
+        {% if events %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
           
             {% for event in events %}
@@ -118,6 +127,9 @@
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <div class="bg-red-200 p-5 text-center rounded-2xl"> لايوجد فعاليات متاحه</div>
+        {%endif%}
 
        
         </div>

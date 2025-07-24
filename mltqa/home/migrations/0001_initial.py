@@ -9,33 +9,28 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('dashboard', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Admin',
+            name='User',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('full_name', models.CharField(max_length=50)),
-                ('email', models.TextField(max_length=50)),
+                ('email', models.CharField(max_length=50)),
+                ('phone', models.CharField(max_length=50)),
                 ('password', models.TextField(max_length=50)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Event',
+            name='Request',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('description', models.TextField(null=True)),
-                ('image_url', models.URLField(null=True)),
-                ('location', models.CharField(max_length=255)),
-                ('available_seats', models.IntegerField(default=50)),
-                ('start_datetime', models.DateTimeField()),
-                ('end_datetime', models.DateTimeField()),
-                ('is_active', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='events', to='dashboard.admin')),
+                ('accept_status', models.BooleanField(default=False)),
+                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='event_requests', to='dashboard.event')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_requests', to='home.user')),
             ],
         ),
     ]
