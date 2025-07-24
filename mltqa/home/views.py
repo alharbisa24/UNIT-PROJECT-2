@@ -44,8 +44,7 @@ def events_view(request:HttpRequest):
     return render(request,"home/allevents.html")
 
 def event_details_view(request:HttpRequest, id:int):
-    user = User.objects.get(pk=request.COOKIES.get('user'))
-    try:
+    try: 
         event = Event.objects.get(pk=id)
         event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
         event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
@@ -60,7 +59,6 @@ def event_details_view(request:HttpRequest, id:int):
 
     return render(request,"home/event_details.html",{
         "event":event,
-        "user":user,
         "success": success,
         "error":error
 
