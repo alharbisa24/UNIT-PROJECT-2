@@ -143,9 +143,9 @@ def book_event_request(request:HttpRequest,id:int):
           if existing_request:
             return redirect(f'/event/{id}?error=exists')
           
-          new_request = Request(event=event, user=user,accept_status=False)
+          new_request = Request(event=event, user=user,status="waiting")
           new_request.save()
-          return redirect(f'/event/{id}?success=true')
+          return redirect(f'/event/{id}?success=True')
           
 
 

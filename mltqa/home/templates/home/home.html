@@ -111,13 +111,23 @@
                     <div class="px-6 pb-5 pt-3 border-t border-gray-100 flex items-center justify-between">
                       
                         <div class="flex items-center gap-2">
+                        
                             <div class="flex -space-x-3 rtl:space-x-reverse">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=م&background=06B6D4&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=أ&background=8B5CF6&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=س&background=F59E0B&color=fff" alt="">
+                                {% for req in event.event_requests.all %}
+                                {% if req.status == 'accepted' %}
+
+                                {% if forloop.counter <= 5 %}
+                                <div class="w-8 h-8 rounded-full bg-violet-600 text-white text-sm flex items-center justify-center border-2 border-white">
+                                    {{ req.user.full_name|first }}
+                                </div>
+                            {% endif %}
+                            {% endif %}
+                                {% endfor %}
                             </div>
-                            <span class="text-sm font-medium text-gray-500">+١٢</span>
+                            <span class="text-sm font-medium text-gray-500">+ {{event.event_requests.count}}</span>
+                       
                         </div>
+
                         <a href="{% url 'home:event_details_view' event.id %}" class="text-cyan-600 hover:text-cyan-800 font-medium text-base flex items-center gap-1 no-underline">
                             عرض التفاصيل
                             <i class="fas fa-chevron-left transform group-hover:-translate-x-1 transition-transform"></i>
