@@ -1,0 +1,95 @@
+{% extends 'dashboard/panel/base.html' %}
+{% load static %}
+
+{% block title %}قائمة الفعاليات{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">تعديل بيانات فعالية</h1>
+    </div>
+    
+
+</div>
+{% if form.errors %}
+<div class="text-red-600 bg-red-50 p-4 rounded-md mb-4">
+    <ul>
+        {% for field in form %}
+                {% for error in field.errors %}
+                        <li> {{ error }}</li>
+                {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if success %}
+<div class="bg-green-100 text-green-800 p-4 rounded-md mb-4">
+    تم تحديث الفعالية بنجاح
+ </div>
+{% endif %}
+<div class="bg-gray-800 p-5 rounded-2xl">
+    <h1 class="text-white text-2xl mb-5">تعديل البيانات</h1>
+    <form action="{% url 'dashboard:dashboard_event_edit_view' data.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mt-2">
+            <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">عنوان الفعالية</label>
+            <input type="text" id="title" name="title" placeholder="عنوان الفعالية" class="w-full rounded-lg border-gray-300 dark:border-gray-600 p-3 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500" required value="{{ data.title }}">
+        </div>
+
+        <div class="my-2">
+            <h1 class="text-white">الصورة السابقة : </h1>
+            <img src="{{ data.image_url }}" class="w-sm rounded-2xl">
+        </div>
+        <div class="mt-2">
+            <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">رفع صورة</label>
+            <div class="flex items-center justify-center w-full">
+                <label for="image" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">اضغط لرفع صورة</span> أو قم بسحب الصورة هنا</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, JPEG (حد أقصى 2MB)</p>
+                    </div>
+                    <input id="image" name="image" type="file" class="hidden" accept="image/png, image/jpeg, image/jpg" onchange="document.getElementById('uploadMessage').textContent = this.files.length > 0 ? 'تم رفع الصورة' : '';">
+                </label>
+            </div>
+            <span id="uploadMessage" class="mt-2 text-sm text-green-600 dark:text-green-400"></span>
+
+        </div>
+        <div class="mt-2">
+            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">وصف الفعالية</label>
+            <textarea id="description" name="description" placeholder="وصف الفعالية" class="w-full rounded-lg border-gray-300 dark:border-gray-600 p-3 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500" required>{{ data.description }}</textarea>
+        </div>
+        
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="mt-2">
+                <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300">رابط الموقع قوقل ماب</label>
+                <input type="url" id="location" name="location" placeholder="https://example.com" class="w-full rounded-lg border-gray-300 dark:border-gray-600 p-3 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500" required value="{{ data.location }}">
+            </div>
+            <div class="mt-2">
+                <label for="available_seats" class="block text-sm font-medium text-gray-700 dark:text-gray-300">عدد المقاعد </label>
+                <input type="number" id="available_seats" name="available_seats" placeholder="50" class="w-full rounded-lg border-gray-300 dark:border-gray-600 p-3 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500" required value="{{ data.available_seats }}">
+            </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="mt-2">
+                <label for="start_datetime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">تاريخ ووقت البداية</label>
+                <input type="datetime-local" id="start_datetime" name="start_datetime" class="w-full rounded-lg border-gray-300 dark:border-gray-600 p-3 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500" required value="{{ data.start_datetime }}">
+            </div>
+            <div class="mt-2">
+                <label for="end_datetime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">تاريخ ووقت النهاية</label>
+                <input type="datetime-local" id="end_datetime" name="end_datetime" class="w-full rounded-lg border-gray-300 dark:border-gray-600 p-3 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500" required value="{{ data.end_datetime }}">
+            </div>
+        </div>
+        <div class="flex items-center gap-2 mt-2">
+            <input type="checkbox" id="is_active" name="is_active" class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"{% if data.is_active == True %} checked {% endif %}>
+            <label for="is_active" class="text-sm font-medium text-gray-700 dark:text-gray-300">اظهار</label>
+        </div>
+        <div class="flex justify-end gap-3">
+            <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">حفظ</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
