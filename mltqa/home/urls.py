@@ -12,5 +12,6 @@ urlpatterns = [
     path('book_event/<id>', views.book_event_request, name="book_event_request"),
     path('logout/',views.home_logout_view, name="home_logout_view"),
     path('requests/',views.requests_view, name="requests_view"),
+    path('requests/<id>/cancel',views.cancel_request_view, name="cancel_request_view")
 
 ]

@@ -15,165 +15,26 @@
             </div>
       
         </div>
-
+        {% if events %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          
+            {% for event in events %}
             <div class="animate-fade">
                 <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 h-full flex flex-col group border border-gray-100 hover:border-cyan-200 hover:-translate-y-1">
                     <div class="relative h-60 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="image"  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        <div class="absolute top-0 left-0 m-4">
+                        <img src="{{event.image_url}}" alt="image"  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        <div class="absolute top-0 right-0 m-4">
+                            {% if event.is_active == True %}
                             <span class="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1.5 rounded-full">متاح</span>
-                        </div>
-                        <div class="absolute bottom-0 right-0 left-0 p-5">
-                            <h3 class="text-2xl font-bold text-white drop-shadow-sm">معرض التقنية السنوي</h3>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-grow">
-                        <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="far fa-calendar-alt text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base">١٥ ديسمبر ٢٠٢٣</span>
-                        </div>
-                        <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="far fa-clock text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base">٠٩:٠٠ صباحاً - ٠٦:٠٠ مساءً</span>
-                        </div>
-                        <p class="text-gray-600 mb-5 text-base line-clamp-2">معرض تقني يضم أحدث التقنيات والابتكارات في مجال الذكاء الاصطناعي والواقع الافتراضي.</p>
-                        
-                        <div class="flex items-center mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="fas fa-map-marker-alt text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base text-gray-600">الرياض، مركز المؤتمرات</span>
-                        </div>
-                    </div>
-                    <div class="px-6 pb-5 pt-3 border-t border-gray-100 flex items-center justify-between">
-                        <a href="#" class="text-cyan-600 hover:text-cyan-800 font-medium text-base flex items-center gap-1 no-underline">
-                            عرض التفاصيل
-                            <i class="fas fa-chevron-left transform group-hover:-translate-x-1 transition-transform"></i>
-                        </a>
-                        <div class="flex items-center gap-2">
-                            <div class="flex -space-x-3 rtl:space-x-reverse">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=م&background=06B6D4&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=أ&background=8B5CF6&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=س&background=F59E0B&color=fff" alt="">
-                            </div>
-                            <span class="text-sm font-medium text-gray-500">+١٢</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="animate-fade">
-                <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 h-full flex flex-col group border border-gray-100 hover:border-cyan-200 hover:-translate-y-1">
-                    <div class="relative h-60 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="image"  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        <div class="absolute top-0 left-0 m-4">
-                            <span class="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1.5 rounded-full">متاح</span>
-                        </div>
-                        <div class="absolute bottom-0 right-0 left-0 p-5">
-                            <h3 class="text-2xl font-bold text-white drop-shadow-sm">معرض التقنية السنوي</h3>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-grow">
-                        <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="far fa-calendar-alt text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base">١٥ ديسمبر ٢٠٢٣</span>
-                        </div>
-                        <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="far fa-clock text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base">٠٩:٠٠ صباحاً - ٠٦:٠٠ مساءً</span>
-                        </div>
-                        <p class="text-gray-600 mb-5 text-base line-clamp-2">معرض تقني يضم أحدث التقنيات والابتكارات في مجال الذكاء الاصطناعي والواقع الافتراضي.</p>
-                        
-                        <div class="flex items-center mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="fas fa-map-marker-alt text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base text-gray-600">الرياض، مركز المؤتمرات</span>
-                        </div>
-                    </div>
-                    <div class="px-6 pb-5 pt-3 border-t border-gray-100 flex items-center justify-between">
-                        <a href="#" class="text-cyan-600 hover:text-cyan-800 font-medium text-base flex items-center gap-1 no-underline">
-                            عرض التفاصيل
-                            <i class="fas fa-chevron-left transform group-hover:-translate-x-1 transition-transform"></i>
-                        </a>
-                        <div class="flex items-center gap-2">
-                            <div class="flex -space-x-3 rtl:space-x-reverse">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=م&background=06B6D4&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=أ&background=8B5CF6&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=س&background=F59E0B&color=fff" alt="">
-                            </div>
-                            <span class="text-sm font-medium text-gray-500">+١٢</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="animate-fade">
-                <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 h-full flex flex-col group border border-gray-100 hover:border-cyan-200 hover:-translate-y-1">
-                    <div class="relative h-60 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="image"  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        <div class="absolute top-0 left-0 m-4">
-                            <span class="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1.5 rounded-full">متاح</span>
-                        </div>
-                        <div class="absolute bottom-0 right-0 left-0 p-5">
-                            <h3 class="text-2xl font-bold text-white drop-shadow-sm">معرض التقنية السنوي</h3>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-grow">
-                        <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="far fa-calendar-alt text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base">١٥ ديسمبر ٢٠٢٣</span>
-                        </div>
-                        <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="far fa-clock text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base">٠٩:٠٠ صباحاً - ٠٦:٠٠ مساءً</span>
-                        </div>
-                        <p class="text-gray-600 mb-5 text-base line-clamp-2">معرض تقني يضم أحدث التقنيات والابتكارات في مجال الذكاء الاصطناعي والواقع الافتراضي.</p>
-                        
-                        <div class="flex items-center mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="fas fa-map-marker-alt text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base text-gray-600">الرياض، مركز المؤتمرات</span>
-                        </div>
-                    </div>
-                    <div class="px-6 pb-5 pt-3 border-t border-gray-100 flex items-center justify-between">
-                        <a href="#" class="text-cyan-600 hover:text-cyan-800 font-medium text-base flex items-center gap-1 no-underline">
-                            عرض التفاصيل
-                            <i class="fas fa-chevron-left transform group-hover:-translate-x-1 transition-transform"></i>
-                        </a>
-                        <div class="flex items-center gap-2">
-                            <div class="flex -space-x-3 rtl:space-x-reverse">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=م&background=06B6D4&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=أ&background=8B5CF6&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=س&background=F59E0B&color=fff" alt="">
-                            </div>
-                            <span class="text-sm font-medium text-gray-500">+١٢</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="animate-fade">
-                <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 h-full flex flex-col group border border-gray-100 hover:border-cyan-200 hover:-translate-y-1">
-                    <div class="relative h-60 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="image"  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        <div class="absolute top-0 left-0 m-4">
-                            <span class="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1.5 rounded-full">متاح</span>
+            
+                            {% else %}
+                            <span class="bg-red-100 text-red-800 text-sm font-semibold px-3 py-1.5 rounded-full">غير متاح</span>
+
+                            {% endif %}
                         </div>
                         <div class="absolute bottom-0 right-0 left-0 p-5">
-                            <h3 class="text-2xl font-bold text-white drop-shadow-sm">معرض التقنية السنوي</h3>
+                            <h3 class="text-2xl font-bold text-white drop-shadow-sm">{{event.title}}</h3>
                         </div>
                     </div>
                     <div class="p-6 flex-grow">
@@ -181,138 +42,56 @@
                             <div class="bg-cyan-50 p-2 rounded-lg">
                                 <i class="far fa-calendar-alt text-cyan-600 text-lg"></i>
                             </div>
-                            <span class="text-base">١٥ ديسمبر ٢٠٢٣</span>
+                            <span class="text-base">{{event.dateperiod}}</span>
                         </div>
                         <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
                             <div class="bg-cyan-50 p-2 rounded-lg">
                                 <i class="far fa-clock text-cyan-600 text-lg"></i>
                             </div>
-                            <span class="text-base">٠٩:٠٠ صباحاً - ٠٦:٠٠ مساءً</span>
+                            <span class="text-base">{{event.timeperiod}}</span>
                         </div>
-                        <p class="text-gray-600 mb-5 text-base line-clamp-2">معرض تقني يضم أحدث التقنيات والابتكارات في مجال الذكاء الاصطناعي والواقع الافتراضي.</p>
-                        
+                        <p class="text-gray-600 mb-5 text-base line-clamp-2">
+                            {{event.description}}
+                            </p>
                         <div class="flex items-center mb-4 gap-2">
                             <div class="bg-cyan-50 p-2 rounded-lg">
                                 <i class="fas fa-map-marker-alt text-cyan-600 text-lg"></i>
                             </div>
-                            <span class="text-base text-gray-600">الرياض، مركز المؤتمرات</span>
+                            <span class="text-base text-blue-600"><a href="{{event.location}}">اضغط هنا لعرض الموقع</a></span>
                         </div>
                     </div>
                     <div class="px-6 pb-5 pt-3 border-t border-gray-100 flex items-center justify-between">
-                        <a href="#" class="text-cyan-600 hover:text-cyan-800 font-medium text-base flex items-center gap-1 no-underline">
-                            عرض التفاصيل
-                            <i class="fas fa-chevron-left transform group-hover:-translate-x-1 transition-transform"></i>
-                        </a>
+                      
                         <div class="flex items-center gap-2">
-                            <div class="flex -space-x-3 rtl:space-x-reverse">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=م&background=06B6D4&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=أ&background=8B5CF6&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=س&background=F59E0B&color=fff" alt="">
-                            </div>
-                            <span class="text-sm font-medium text-gray-500">+١٢</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="animate-fade">
-                <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 h-full flex flex-col group border border-gray-100 hover:border-cyan-200 hover:-translate-y-1">
-                    <div class="relative h-60 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="image"  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        <div class="absolute top-0 left-0 m-4">
-                            <span class="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1.5 rounded-full">متاح</span>
-                        </div>
-                        <div class="absolute bottom-0 right-0 left-0 p-5">
-                            <h3 class="text-2xl font-bold text-white drop-shadow-sm">معرض التقنية السنوي</h3>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-grow">
-                        <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="far fa-calendar-alt text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base">١٥ ديسمبر ٢٠٢٣</span>
-                        </div>
-                        <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="far fa-clock text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base">٠٩:٠٠ صباحاً - ٠٦:٠٠ مساءً</span>
-                        </div>
-                        <p class="text-gray-600 mb-5 text-base line-clamp-2">معرض تقني يضم أحدث التقنيات والابتكارات في مجال الذكاء الاصطناعي والواقع الافتراضي.</p>
                         
-                        <div class="flex items-center mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="fas fa-map-marker-alt text-cyan-600 text-lg"></i>
+                            <div class="flex -space-x-3 rtl:space-x-reverse">
+                                {% for req in event.event_requests.all %}
+                                {% if req.status == 'accepted' %}
+
+                                {% if forloop.counter <= 5 %}
+                                <div class="w-8 h-8 rounded-full bg-violet-600 text-white text-sm flex items-center justify-center border-2 border-white">
+                                    {{ req.user.full_name|first }}
+                                </div>
+                            {% endif %}
+                            {% endif %}
+                                {% endfor %}
                             </div>
-                            <span class="text-base text-gray-600">الرياض، مركز المؤتمرات</span>
+                            <span class="text-sm font-medium text-gray-500">+ {{event.event_requests.count}}</span>
+                       
                         </div>
-                    </div>
-                    <div class="px-6 pb-5 pt-3 border-t border-gray-100 flex items-center justify-between">
-                        <a href="#" class="text-cyan-600 hover:text-cyan-800 font-medium text-base flex items-center gap-1 no-underline">
+
+                        <a href="{% url 'home:event_details_view' event.id %}" class="text-cyan-600 hover:text-cyan-800 font-medium text-base flex items-center gap-1 no-underline">
                             عرض التفاصيل
                             <i class="fas fa-chevron-left transform group-hover:-translate-x-1 transition-transform"></i>
                         </a>
-                        <div class="flex items-center gap-2">
-                            <div class="flex -space-x-3 rtl:space-x-reverse">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=م&background=06B6D4&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=أ&background=8B5CF6&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=س&background=F59E0B&color=fff" alt="">
-                            </div>
-                            <span class="text-sm font-medium text-gray-500">+١٢</span>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="animate-fade">
-                <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 h-full flex flex-col group border border-gray-100 hover:border-cyan-200 hover:-translate-y-1">
-                    <div class="relative h-60 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="image"  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                        <div class="absolute top-0 left-0 m-4">
-                            <span class="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1.5 rounded-full">متاح</span>
-                        </div>
-                        <div class="absolute bottom-0 right-0 left-0 p-5">
-                            <h3 class="text-2xl font-bold text-white drop-shadow-sm">معرض التقنية السنوي</h3>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-grow">
-                        <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="far fa-calendar-alt text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base">١٥ ديسمبر ٢٠٢٣</span>
-                        </div>
-                        <div class="flex items-center text-gray-500 text-sm mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="far fa-clock text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base">٠٩:٠٠ صباحاً - ٠٦:٠٠ مساءً</span>
-                        </div>
-                        <p class="text-gray-600 mb-5 text-base line-clamp-2">معرض تقني يضم أحدث التقنيات والابتكارات في مجال الذكاء الاصطناعي والواقع الافتراضي.</p>
-                        
-                        <div class="flex items-center mb-4 gap-2">
-                            <div class="bg-cyan-50 p-2 rounded-lg">
-                                <i class="fas fa-map-marker-alt text-cyan-600 text-lg"></i>
-                            </div>
-                            <span class="text-base text-gray-600">الرياض، مركز المؤتمرات</span>
-                        </div>
-                    </div>
-                    <div class="px-6 pb-5 pt-3 border-t border-gray-100 flex items-center justify-between">
-                        <a href="#" class="text-cyan-600 hover:text-cyan-800 font-medium text-base flex items-center gap-1 no-underline">
-                            عرض التفاصيل
-                            <i class="fas fa-chevron-left transform group-hover:-translate-x-1 transition-transform"></i>
-                        </a>
-                        <div class="flex items-center gap-2">
-                            <div class="flex -space-x-3 rtl:space-x-reverse">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=م&background=06B6D4&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=أ&background=8B5CF6&color=fff" alt="">
-                                <img class="w-8 h-8 border-2 border-white rounded-full" src="https://ui-avatars.com/api/?name=س&background=F59E0B&color=fff" alt="">
-                            </div>
-                            <span class="text-sm font-medium text-gray-500">+١٢</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
+        {% else %}
+        <div class="bg-red-200 p-5 text-center rounded-2xl"> لايوجد فعاليات متاحه</div>
+        {%endif%}
 
        
         </div>

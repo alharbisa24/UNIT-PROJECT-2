@@ -24,7 +24,7 @@ def home_view(request:HttpRequest):
         user = User.objects.get(pk=request.COOKIES.get('user'))
     else: 
          user = None
-    events = Event.objects.all()[:3]
+    events = Event.objects.all().order_by('-created_at')[:3]
     
     for event in events:
         event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
@@ -41,26 +41,48 @@ def home_view(request:HttpRequest):
 
 def events_view(request:HttpRequest):
     user = User.objects.get(pk=request.COOKIES.get('user'))
-    return render(request,"home/allevents.html")
+    events = Event.objects.all().order_by('-created_at')
+    
+    for event in events:
+        event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
+        event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
+        event.dateperiod = f"{event.startdate_ar} - {event.enddate_ar}"
+        event.timeperiod = f"{event.start_datetime.strftime('%I:%M %p').replace('AM', 'صباحا').replace('PM', 'مساء')} - {event.end_datetime.strftime('%I:%M %p').replace('AM', 'صباحا').replace('PM', 'مساء')}"
+
+
+    return render(request,"home/allevents.html", {
+             "events": events,
+        "user":user 
+    })
 
 def event_details_view(request:HttpRequest, id:int):
+    if 'user' in request.COOKIES:
+        user = User.objects.get(pk=request.COOKIES.get('user'))
+    else: 
+         user = None
     try: 
         event = Event.objects.get(pk=id)
         event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
         event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
         event.dateperiod = f"{event.startdate_ar} - {event.enddate_ar}"
         event.timeperiod = f"{event.start_datetime.strftime('%I:%M %p').replace('AM', 'صباحا').replace('PM', 'مساء')} - {event.end_datetime.strftime('%I:%M %p').replace('AM', 'صباحا').replace('PM', 'مساء')}"
+        event.available_seats_remaining = event.available_seats - event.event_requests.filter(status__in=["accepted", "attended"]).count()
+   
     except Event.DoesNotExist:
          return redirect('home:home_view')
     
     success = request.GET.get('success', "false")
     error = request.GET.get('error', "error")
          
+    user_has_request = Request.objects.filter(event=event, user=user).exists()
 
     return render(request,"home/event_details.html",{
         "event":event,
         "success": success,
-        "error":error
+        "error":error,
+        "user":user,
+        "user_has_request": user_has_request
+
 
     })
 
@@ -82,16 +104,18 @@ def login_view(request:HttpRequest):
                     else:
                         form.add_error('password', 'كلمة المرور غير صحيحة ')
                 except User.DoesNotExist:
+                        print("no")
                         form.add_error('email', 'البريد الالكتروني غير موجود ')
-
+ 
                 else:
-            
                     form = forms.LoginForm() 
 
     else:
             form = forms.LoginForm()
             
-    return render(request,"home/login.html")
+    return render(request,"home/login.html", {
+         "form":form
+    })
 
 def register_view(request:HttpRequest):
     if request.method == "POST":
@@ -116,9 +140,7 @@ def register_view(request:HttpRequest):
                 )
                 new_user.save()
                 form = forms.RegisterForm() 
-                return redirect('home:login_view', {
-                    "success":True
-                })
+                return redirect('/login?registered=True')
 
     else:
         form = forms.RegisterForm()
@@ -168,3 +190,14 @@ def requests_view(request:HttpRequest):
          "user":user,
          "requests":requests
      })
+
+
+def cancel_request_view(request:HttpRequest, id:int):
+    req = Request.objects.get(pk=id)
+    if req:
+         req.status = 'canceled'
+         req.save()
+         return redirect('/requests/?canceled=True')
+    
+    else:
+         return redirect("home:home_view")

@@ -150,6 +150,8 @@ def dashboard_events_view(request:HttpRequest):
         event.created_at_ar = format_arabic_hijri_with_time(event.created_at)
         event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
         event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
+        event.available_seats_remaining = event.available_seats - event.event_requests.filter(status__in=["accepted", "attended"]).count()
+
 
     number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     return render(request, 'dashboard/panel/events.html',{
@@ -169,9 +171,9 @@ def dashboard_requests_view(request:HttpRequest):
         return redirect('dashboard:dashboard_login_view')
     events =  models.Event.objects.all()
     if "search" in request.GET:
-        requests = HomeModels.Request.objects.filter(user__full_name__contains=request.GET["search"])
+        requests = HomeModels.Request.objects.filter(user__full_name__contains=request.GET["search"]).filter(status="waiting")
     else:
-        requests = HomeModels.Request.objects.all()
+        requests = HomeModels.Request.objects.filter(status="waiting")
     
     if "event" in request.GET:
         requests = requests.filter(event__id__contains=request.GET["event"])
@@ -378,6 +380,39 @@ def dashboard_event_edit_view(request:HttpRequest, id:int):
             })
     except models.Event.DoesNotExist:
         return redirect('dashboard:dashboard_events_view')
+
+def dashboard_event_requests_view(request:HttpRequest, id:int):
+    try:
+        event = models.Event.objects.get(pk=id)
+        admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+        number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
+        event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
+        event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
+        
+        data_summary = { 
+        "all": event.event_requests.count(),
+        "new": event.event_requests.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count(),
+        "accepted": event.event_requests.filter(status='accepted').count(),
+        "rejected": event.event_requests.filter(status='rejected').count(),
+
+        
+        }
+        event_requests = event.event_requests.all()
+        return render(request, "dashboard/panel/event_requests.html", {
+            'admin' : admin,
+            "number_of_new_requests": number_of_new_requests,
+            "event":event,
+            "data_summary":data_summary,
+            "event_requests":event_requests
+
+
+                
+            })
+
+    except models.Event.DoesNotExist:
+        return redirect('dashboard:dashboard_events_view')
+
+
 
 
 def upload_image(uploadedFile, filename):

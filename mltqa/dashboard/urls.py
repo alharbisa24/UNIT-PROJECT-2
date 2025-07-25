@@ -16,6 +16,7 @@ urlpatterns = [
     path('events/<id>/delete/', views.dashboard_event_delete_view, name="dashboard_event_delete_view"),
     path('logout/',views.dashboard_logout_view, name="dashboard_logout_view"),
     path('events/<id>/edit/', views.dashboard_event_edit_view, name="dashboard_event_edit_view"),
+    path('events/<id>/requests/', views.dashboard_event_requests_view, name="dashboard_event_requests_view"),
     path('ratings/', views.dashboard_ratings_view, name="dashboard_ratings_view"),
     path('users/', views.dashboard_users_view, name="dashboard_users_view"),
     path('users/<id>/delete', views.dashboard_users_delete_view, name="dashboard_users_delete_view"),

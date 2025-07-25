@@ -5,8 +5,7 @@
 
 {% block content %}
 <div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">طلبات الفعاليات</h1>
-    <p class="text-gray-600 dark:text-gray-400 mb-6">إدارة طلبات المشاركة في الفعاليات</p>
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">طلبات الفعالية</h1>
     <form method="GET" action="" class="flex flex-col md:flex-row gap-4 mb-6">
         <div class="relative flex-grow">
             <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
@@ -15,36 +14,10 @@
             <input type="text" name="search" class="bg-white dark:bg-gray-800 w-full pr-10 pl-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white" placeholder="بحث بالاسم الكامل..." minlength="3" value="{{request.GET.search}}">
         </div>
         
-        <div class="flex gap-3">
-            <select name="event" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">جميع الفعاليات</option>
-        {% for event in events %}
-                <option value="{{event.id}}" {% if request.GET.event == event.id|stringformat:"s" %} selected {% endif %}>{{event.title}}</option>
-                {% endfor %}
-         
-
-            </select>
-            
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition-colors duration-150 ease-in-out">
-                تطبيق
-            </button>
-        </div>
+  
     </form>
 
-    {% if deleted == "True" %}
-
-<div class="bg-green-700 my-5 mx-2 p-3 text-center rounded-xl text-white">
-  تم حذف الطلب بنجاح !
-</div>
-
-{%endif%}
-
-{% if accepted == "True" %}
-<div class="bg-green-700 my-5 mx-2 p-3 text-center rounded-xl text-white">
-    تم قبول الطلب بنجاح !
-  </div>
-  
-  {%endif%}
+ 
   
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-between">
@@ -120,8 +93,8 @@
             </thead>
             <tbody class="divide-y divide-gray-700">
 
-                {% if requests %}
-                {% for request in requests %}
+                {% if event_requests %}
+                {% for request in event_requests %}
                 <tr class="hover:bg-gray-700/50 transition-colors">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-white">{{forloop.counter}}</div>
@@ -160,6 +133,9 @@
                         <span class="bg-green-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">مقبول</span>
                         {%elif request.status == 'rejected'  %}
                         <span class="bg-red-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">مرفوض</span>
+                        {%elif request.status == 'canceled'  %}
+                        <span class="bg-red-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">ملغي من المستخدم</span>
+                   
                         {% elif request.status == 'attend'  %}
                         <span class="bg-blue-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">تم الحضور</span>
                         {% endif %}
@@ -167,11 +143,6 @@
                     
                     <td class="px-6 py-4 whitespace-nowrap text-left">
                         <div class="flex items-center gap-2">
-                        {% if request.status != 'accepted'  %}
-                            <button class="text-green-400 hover:text-green-300 transition-colors" onclick="confirmAccept(event, '{% url 'dashboard:dashboard_request_accept_view' request.id %}')">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            {% endif %}
 
                             <button onclick="confirmDelete(event, '{% url 'dashboard:dashboard_request_delete_view' request.id %}')" class="text-red-400 hover:text-red-300 transition-colors">
                                 <i class="fas fa-trash"></i>

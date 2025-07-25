@@ -50,7 +50,7 @@ class EventForm(forms.Form):
             'max_length': 'يجب ادخال العنوان بشكل صحيح',
         },)
 
-    description = forms.CharField(max_length=200,
+    description = forms.CharField(max_length=500,
                              error_messages={
             'required': 'يجب ادخال الوصف',
             'max_length': 'يجب ادخال الوصف بشكل صحيح',

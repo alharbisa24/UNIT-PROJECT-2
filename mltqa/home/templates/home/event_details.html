@@ -63,14 +63,11 @@
           
           <div class="flex items-center gap-2 bg-blue-800/30 px-4 py-2 rounded-lg">
             <i class="fas fa-ticket-alt text-blue-300"></i>
-            <span class="text-blue-100"> {{event.event_requests.count}} مقعد متبقي </span>
+            <span class="text-blue-100"> {{event.available_seats_remaining}} مقعد متبقي </span>
           </div>
         </div>
         
-        <a href="#register" class="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:shadow-lg hover:shadow-cyan-500/25 transition-all">
-          <i class="fas fa-ticket-alt"></i>
-          <span>احجز الآن</span>
-        </a>
+       
       </div>
     </div>
   </div>
@@ -109,44 +106,7 @@
            
           </div>
         </div>
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">تقييمات المستفيدين</h2>
-          
-          <div class="space-y-6">
-            {% if event.reviews %}
-              {% for review in event.reviews %}
-                <div class="border-b border-gray-100 pb-5 mb-5 last:border-0 last:pb-0 last:mb-0">
-                  <div class="flex justify-between items-center mb-2">
-                    <div class="flex items-center">
-                      <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold mr-3">
-                        {{ review.user_name|slice:":1" }}
-                      </div>
-                      <div>
-                        <h4 class="font-medium text-gray-800">{{ review.user_name }}</h4>
-                        <div class="text-sm text-gray-500">{{ review.date }}</div>
-                      </div>
-                    </div>
-                    <div class="flex text-yellow-400">
-                      {% for i in review.ratings %}
-                        <i class="fas fa-star"></i>
-                      {% endfor %}
-                      {% if review.rating_empty %}
-                        {% for i in review.rating_empty %}
-                          <i class="far fa-star text-gray-300"></i>
-                        {% endfor %}
-                      {% endif %}
-                    </div>
-                  </div>
-                  <p class="text-gray-600">{{ review.comment }}</p>
-                </div>
-              {% endfor %}
-            {% else %}
-              <div class="text-center py-6 text-gray-500">
-                <p>لا توجد تقييمات حتى الآن</p>
-              </div>
-            {% endif %}
-          </div>
-        </div>
+     
         
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
           <h2 class="text-2xl font-bold text-gray-800 mb-6">الموقع</h2>
@@ -169,27 +129,85 @@
         </div>
       </div>
       <div class="w-full lg:w-1/3" id="register">
-        <div class="sticky top-8"></div>
-          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">احجز مقعدك</h2>
-        
-        {% if 'user' in request.COOKIES %}
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">احجز مقعدك</h2>
+      
+      {% if event.available_seats_remaining > 0 %}
+      {% if 'user' in request.COOKIES %}
+        {% if user_has_request == True %}
+          <p class="text-gray-500 text-sm mt-4 text-center">
+            يوجد حجز سابق للفعالية
+          </p>
+        {% else %}
           <form method="post" action="{% url 'home:book_event_request' event.id %}">
             {% csrf_token %}
             <button type="submit" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white py-3 rounded-xl font-medium hover:shadow-lg hover:shadow-cyan-500/25 transition-all">
-          تأكيد الحجز
+        تأكيد الحجز
             </button>
           </form>
-        {% else %}
-          <p class="text-gray-500 text-sm mt-4 text-center">
-            يجب تسجيل الدخول لتأكيد الحجز. <a href="{% url 'home:login_view' %}" class="text-blue-600 hover:underline">تسجيل الدخول</a>
-          </p>
         {% endif %}
+      {% else %}
+        <p class="text-gray-500 text-sm mt-4 text-center">
+          يجب تسجيل الدخول لتأكيد الحجز. <a href="{% url 'home:login_view' %}" class="text-blue-600 hover:underline">تسجيل الدخول</a>
+        </p>
+      {% endif %}
+      {% else %}
+        <p class="text-red-500 text-sm mt-4 text-center">
+          لا يوجد مقاعد متاحة لهذه الفعالية
+        </p>
+      {% endif %}
+      </div>
+      
+      <!-- Reviews Section -->
+      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8 mt-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">تقييمات المستفيدين</h2>
+        
+        <div class="space-y-6">
+          <div class="border-b border-gray-100 pb-5 mb-5 last:border-0 last:pb-0 last:mb-0">
+            <div class="flex justify-between items-center mb-2">
+              <div class="flex items-center">
+                <div>
+                  <h4 class="font-medium text-gray-800">محمد</h4>
+                  <div class="text-sm text-gray-500">2023/05/15</div>
+                </div>
+              </div>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="far fa-star text-gray-300"></i>
+              </div>
+            </div>
+            <p class="text-gray-600">تجربه</p>
+          </div>
+      
+          <div class="border-b border-gray-100 pb-5 mb-5 last:border-0 last:pb-0 last:mb-0">
+            <div class="flex justify-between items-center mb-2">
+              <div class="flex items-center">
+                <div>
+                  <h4 class="font-medium text-gray-800">احمد الحمد</h4>
+                  <div class="text-sm text-gray-500">2023/05/10</div>
+                </div>
+              </div>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+            <p class="text-gray-600">تجربه</p>
+          </div>
+      
+          <div class="text-center py-6 text-gray-500" style="display: none;">
+            <p>لا توجد تقييمات حتى الان</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </section>
-
 {% endblock %}
