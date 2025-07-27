@@ -31,7 +31,9 @@
                   
         <div class="p-5 border-b border-gray-100 dark:border-gray-800">
             <div class="flex items-center gap-4">
-                <img src="https://ui-avatars.com/api/?name={{admin.full_name}}&background=06b6d4&color=fff" alt="user" class="h-12 w-12 rounded-full ring-2 ring-cyan-500 bg-white">
+                <div class="py-3 px-5 bg-cyan-500 text-white rounded-3xl">
+                    {{admin.full_name|first}}
+                </div>
                 <div>
                     <h3 class="text-base font-semibold text-gray-800 dark:text-white">مرحبا {{admin.full_name}}</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400">لوحة التحكم</p>

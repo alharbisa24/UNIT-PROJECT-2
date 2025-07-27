@@ -62,11 +62,12 @@ def event_details_view(request:HttpRequest, id:int):
          user = None
     try: 
         event = Event.objects.get(pk=id)
+        event_ratings = event.event_ratings.filter(status=True)
         event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
         event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
         event.dateperiod = f"{event.startdate_ar} - {event.enddate_ar}"
         event.timeperiod = f"{event.start_datetime.strftime('%I:%M %p').replace('AM', 'صباحا').replace('PM', 'مساء')} - {event.end_datetime.strftime('%I:%M %p').replace('AM', 'صباحا').replace('PM', 'مساء')}"
-        event.available_seats_remaining = event.available_seats - event.event_requests.filter(status__in=["accepted", "attended"]).count()
+        event.available_seats_remaining = event.available_seats - event.event_requests.filter(status__in=["accepted", "attend", 'absent']).count()
    
     except Event.DoesNotExist:
          return redirect('home:home_view')
@@ -78,6 +79,7 @@ def event_details_view(request:HttpRequest, id:int):
 
     return render(request,"home/event_details.html",{
         "event":event,
+        "event_ratings":event_ratings,
         "success": success,
         "error":error,
         "user":user,
@@ -201,5 +203,17 @@ def cancel_request_view(request:HttpRequest, id:int):
          return redirect("home:home_view")
 
 
-def add_rating_for_event(request:HttpRequest, id:int, rating:int):
-    pass
+def add_rating_for_event(request:HttpRequest, id:int):
+    if request.POST:
+        comment = request.POST['comment']
+        rating = request.POST['rating']
+        try:
+            req = Request.objects.get(pk=id)
+            event = Event.objects.get(pk=req.event.id)
+            new_rating = Rating(request=req, event=event, stars=int(rating),status=False,comment=comment)
+            new_rating.save()
+            return redirect('/requests/?ratingadded=True')
+
+
+        except Request.DoesNotExist as e:
+            print(e)

@@ -47,12 +47,7 @@
             <span class="text-blue-100">{{event.timeperiod}}</span>
           </div>
           
-          <div class="flex items-center gap-2">
-            <div class="bg-blue-800/50 p-2 rounded-lg">
-              <i class="fas fa-map-marker-alt text-blue-300 text-lg"></i>
-            </div>
-            <span class="text-blue-100"><a href="{{event.location}}">اضغط هنا لعرض الموقع</a></span>
-          </div>
+        
         </div>
         
         <div class="flex flex-wrap gap-4 mb-8">
@@ -121,6 +116,7 @@
             class="rounded-2xl w-full h-90">
           </iframe>
           
+          
 
           </div>
           
@@ -169,43 +165,39 @@
         <h2 class="text-2xl font-bold text-gray-800 mb-6">تقييمات المستفيدين</h2>
         
         <div class="space-y-6">
+       
+          {% if event_ratings %}
+          {% for rating in event_ratings %}
           <div class="border-b border-gray-100 pb-5 mb-5 last:border-0 last:pb-0 last:mb-0">
             <div class="flex justify-between items-center mb-2">
               <div class="flex items-center">
                 <div>
-                  <h4 class="font-medium text-gray-800">محمد</h4>
-                  <div class="text-sm text-gray-500">2023/05/15</div>
+                  <h4 class="font-medium text-gray-800">{{rating.request.user.full_name}}</h4>
+                  <div class="text-sm text-gray-500">{{rating.created_at}}</div>
                 </div>
               </div>
               <div class="flex text-yellow-400">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="far fa-star text-gray-300"></i>
+                {% for i in "12345" %}
+                {% if forloop.counter <= rating.stars %}
+                    <i class="fas fa-star"></i>
+                {% else %}
+                    <i class="far fa-star text-gray-300"></i>
+                {% endif %}
+            {% endfor %}
+
               </div>
+              
             </div>
-            <p class="text-gray-600">تجربه</p>
+            <p class="text-gray-600">{{rating.comment}}</p>
           </div>
+          {% endfor %}
+          {%else%}
+
+          <span class="text-red-500">لايوجد تقييمات</span>
+
+          {%endif%}
       
-          <div class="border-b border-gray-100 pb-5 mb-5 last:border-0 last:pb-0 last:mb-0">
-            <div class="flex justify-between items-center mb-2">
-              <div class="flex items-center">
-                <div>
-                  <h4 class="font-medium text-gray-800">احمد الحمد</h4>
-                  <div class="text-sm text-gray-500">2023/05/10</div>
-                </div>
-              </div>
-              <div class="flex text-yellow-400">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-              </div>
-            </div>
-            <p class="text-gray-600">تجربه</p>
-          </div>
+       
       
           <div class="text-center py-6 text-gray-500" style="display: none;">
             <p>لا توجد تقييمات حتى الان</p>

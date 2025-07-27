@@ -24,6 +24,8 @@ urlpatterns = [
     path('users/', views.dashboard_users_view, name="dashboard_users_view"),
     path('users/<id>/delete', views.dashboard_users_delete_view, name="dashboard_users_delete_view"),
     path('users/<id>/requests', views.dashboard_user_requests_view, name="dashboard_user_requests_view"),
-
+    path('ratings/', views.dashboard_ratings_view, name="dashboard_ratings_view"),
+    path('ratings/<id>/delete/', views.dashboard_ratings_delete_view, name="dashboard_ratings_delete_view"),
+    path('ratings/<id>/update_status/', views.dashboard_ratings_update_status_view, name="dashboard_ratings_update_status_view"),
 
 ]

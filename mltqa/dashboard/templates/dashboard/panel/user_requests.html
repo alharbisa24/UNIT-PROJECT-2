@@ -146,13 +146,13 @@
                     
                     <td class="px-6 py-4 whitespace-nowrap text-left">
                         <div class="flex items-center gap-2">
-                            {% if request.status != 'accepted'  %}
+                            {% if request.status != 'accepted' and request.status != 'attend' and request.status != 'absent'  %}
                             <button class="text-green-400 hover:text-green-300 transition-colors" onclick="confirmAccept(event, '{% url 'dashboard:dashboard_request_accept_view' request.id %}')">
                                 <i class="fas fa-check"></i>
                             </button>
                             {% endif %}
 
-                            {% if request.status != 'rejected'  %}
+                            {% if request.status != 'rejected' and request.status != 'attend' and request.status != 'absent'  %}
                             <button class="text-red-400 hover:text-red-300 transition-colors" onclick="confirmReject(event, '{% url 'dashboard:dashboard_request_reject_view' request.id %}')">
                                 <i class="fas fa-times"></i>
                             </button>

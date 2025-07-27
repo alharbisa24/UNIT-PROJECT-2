@@ -149,7 +149,7 @@ def dashboard_events_view(request:HttpRequest):
         event.created_at_ar = format_arabic_hijri_with_time(event.created_at)
         event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
         event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
-        event.available_seats_remaining = event.available_seats - event.event_requests.filter(status__in=["accepted", "attended"]).count()
+        event.available_seats_remaining = event.available_seats - event.event_requests.filter(status__in=["accepted", "attend", 'absent']).count()
 
 
     number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
@@ -415,7 +415,7 @@ def dashboard_event_requests_view(request:HttpRequest, id:int):
 
         
         }
-        event_requests = event.event_requests.filter(status__in=["accepted", "attended"])
+        event_requests = event.event_requests.filter(status__in=["accepted", "attend", 'absent'])
         search = request.GET.get("search", "").strip()
         if search:
                 event_requests = event_requests.filter(user__full_name__contains=search)
@@ -525,7 +525,9 @@ def dashboard_event_request_status_view(request:HttpRequest, id:int):
 
 def dashboard_attend_request_view(request: HttpRequest):
     if request.method == 'POST':
+        print(request.POST)
         for key, value in request.POST.items():
+            print(key)
             if key.startswith('attendence_'):
                 try:
                     request_id = int(key.replace('attendence_', ''))
@@ -542,11 +544,57 @@ def dashboard_attend_request_view(request: HttpRequest):
 
                     event_request.save()
 
-                    redirect_url = request.META.get("HTTP_REFERER", "/").split("?")[0]
-                    return redirect(f"{redirect_url}?success=True")
-
                 except HomeModels.Request.DoesNotExist as e:
                     print(e)
 
+        redirect_url = request.META.get("HTTP_REFERER", "/").split("?")[0]
+        return redirect(f"{redirect_url}?success=True")
+
     redirect_url = request.META.get("HTTP_REFERER", "/").split("?")[0]
     return redirect(redirect_url)
+
+def dashboard_ratings_view(request:HttpRequest):
+    if not 'admin' in request.COOKIES:
+        return redirect('dashboard:dashboard_login_view')
+ 
+ 
+    if "search" in request.GET and len(request.GET["search"]) >= 3:
+        ratings = HomeModels.Rating.objects.filter(request__user__full_name__contains=request.GET["search"])
+    else:
+        try:
+            ratings = HomeModels.Rating.objects.all()
+            for rating in ratings:
+                rating.event.startdate_ar = format_arabic_hijri_with_time(rating.event.start_datetime)
+                rating.event.enddate_ar = format_arabic_hijri_with_time(rating.event.end_datetime)
+        
+        except HomeModels.Rating.DoesNotExist:
+            print("error")
+
+    admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+    number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
+    return render(request, "dashboard/panel/ratings.html", {
+        'ratings' : ratings,
+        "admin": admin,
+        "number_of_new_requests": number_of_new_requests
+
+    })
+
+
+def dashboard_ratings_delete_view(request:HttpRequest, id:int):
+    rating = HomeModels.Rating.objects.get(pk=id)
+
+    if rating:
+        rating.delete()
+        redirect_url = request.META.get("HTTP_REFERER")
+        return redirect(f'{redirect_url}?deleted=True')
+
+
+
+
+def dashboard_ratings_update_status_view(request:HttpRequest,id:int):
+    rating = HomeModels.Rating.objects.get(pk=id)
+    if rating:
+        rating.status = not rating.status
+        rating.save()
+        redirect_url = request.META.get("HTTP_REFERER", "/").split("?")[0]
+        return redirect(f"{redirect_url}?success=True")

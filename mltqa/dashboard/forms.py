@@ -56,10 +56,9 @@ class EventForm(forms.Form):
             'max_length': 'يجب ادخال الوصف بشكل صحيح',
         },)
     location = forms.URLField(
-        max_length=200,
+        validators=[],
         error_messages={
             'required': 'يجب ادخال الرابط',
-            'max_length': 'يجب ادخال الرابط بشكل صحيح',
             'invalid': 'يجب ادخال رابط صالح',
         },
     )
