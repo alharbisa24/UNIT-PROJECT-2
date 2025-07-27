@@ -104,14 +104,12 @@ def login_view(request:HttpRequest):
                     else:
                         form.add_error('password', 'كلمة المرور غير صحيحة ')
                 except User.DoesNotExist:
-                        print("no")
                         form.add_error('email', 'البريد الالكتروني غير موجود ')
  
-                else:
-                    form = forms.LoginForm() 
+
 
     else:
-            form = forms.LoginForm()
+        form = forms.LoginForm()
             
     return render(request,"home/login.html", {
          "form":form
@@ -201,3 +199,7 @@ def cancel_request_view(request:HttpRequest, id:int):
     
     else:
          return redirect("home:home_view")
+
+
+def add_rating_for_event(request:HttpRequest, id:int, rating:int):
+    pass

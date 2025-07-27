@@ -48,9 +48,6 @@ def dashboard_login_view(request:HttpRequest):
 
 
 def dashboard_home_view(request:HttpRequest):
-    import platform, time
-    print("Platform:", platform.platform())
-    print("Current Time:", time.ctime())
     if not 'admin' in request.COOKIES:
         return redirect('dashboard:dashboard_login_view')
     
@@ -62,6 +59,7 @@ def dashboard_home_view(request:HttpRequest):
     total_users= HomeModels.Request.objects.count()
     total_requests = HomeModels.Request.objects.count()
     total_admins= HomeModels.Request.objects.count()    
+    total_ratings= HomeModels.Rating.objects.count()    
 
 
 
@@ -77,6 +75,7 @@ def dashboard_home_view(request:HttpRequest):
         "total_users":total_users,
         "total_requests":total_requests,
         "total_admins":total_admins,
+        "total_ratings":total_ratings
     })
 
 def format_arabic_hijri_with_time(dt):
@@ -170,13 +169,20 @@ def dashboard_requests_view(request:HttpRequest):
     if not 'admin' in request.COOKIES:
         return redirect('dashboard:dashboard_login_view')
     events =  models.Event.objects.all()
-    if "search" in request.GET:
-        requests = HomeModels.Request.objects.filter(user__full_name__contains=request.GET["search"]).filter(status="waiting")
-    else:
-        requests = HomeModels.Request.objects.filter(status="waiting")
-    
-    if "event" in request.GET:
-        requests = requests.filter(event__id__contains=request.GET["event"])
+    requests = HomeModels.Request.objects.all()
+
+    search = request.GET.get("search", "").strip()
+    status = request.GET.get("status", "").strip()
+    event = request.GET.get("event", "").strip()
+
+    if search:
+        requests = requests.filter(user__full_name__contains=search)
+
+    if status:
+        requests = requests.filter(status=status)
+
+    if event:
+        requests = requests.filter(event__id=event)
     
     deleted = request.GET.get('deleted', "false")
     accepted = request.GET.get('accepted', "False")
@@ -214,7 +220,8 @@ def dashboard_request_delete_view(request:HttpRequest,id:int):
 
     if req:
         req.delete()
-        return redirect('/dashboard/requests/?deleted=True')
+        redirect_url = request.META.get("HTTP_REFERER")
+        return redirect(f'{redirect_url}?deleted=True')
 
 
 
@@ -223,7 +230,18 @@ def dashboard_request_accept_view(request:HttpRequest, id:int):
     if req:
         req.status='accepted'
         req.save()
-        return redirect('/dashboard/requests/?accepted=True')
+        redirect_url = request.META.get("HTTP_REFERER")
+        return redirect(f'{redirect_url}?accepted=True')
+
+
+
+def dashboard_request_reject_view(request:HttpRequest, id:int):
+    req = HomeModels.Request.objects.get(pk=id)
+    if req:
+        req.status='rejected'
+        req.save()
+        redirect_url = request.META.get("HTTP_REFERER")
+        return redirect(f'{redirect_url}?rejected=True')
 
 
 def dashboard_ratings_view(request:HttpRequest):
@@ -344,7 +362,6 @@ def dashboard_event_edit_view(request:HttpRequest, id:int):
                         event.available_seats = request.POST['available_seats']
                         event.start_datetime = datetime.strptime(request.POST['start_datetime'], '%Y-%m-%dT%H:%M')
                         event.end_datetime = datetime.strptime(request.POST['end_datetime'], '%Y-%m-%dT%H:%M')
-                        event.is_active = True if request.POST.get('is_active') == 'on' else False
                         if request.FILES and event.image_url:
                             delete_image_from_firebase(event.image_url)
 
@@ -368,6 +385,7 @@ def dashboard_event_edit_view(request:HttpRequest, id:int):
         'start_datetime': localtime(event.start_datetime).strftime('%Y-%m-%dT%H:%M'),
         'end_datetime': localtime(event.end_datetime).strftime('%Y-%m-%dT%H:%M'),
         'is_active': event.is_active,
+        'event_requests':event.event_requests.all()
             }
             return render(request, "dashboard/panel/edit_event.html", {
             'admin' : admin,
@@ -397,7 +415,11 @@ def dashboard_event_requests_view(request:HttpRequest, id:int):
 
         
         }
-        event_requests = event.event_requests.all()
+        event_requests = event.event_requests.filter(status__in=["accepted", "attended"])
+        search = request.GET.get("search", "").strip()
+        if search:
+                event_requests = event_requests.filter(user__full_name__contains=search)
+
         return render(request, "dashboard/panel/event_requests.html", {
             'admin' : admin,
             "number_of_new_requests": number_of_new_requests,
@@ -412,6 +434,43 @@ def dashboard_event_requests_view(request:HttpRequest, id:int):
     except models.Event.DoesNotExist:
         return redirect('dashboard:dashboard_events_view')
 
+
+def dashboard_user_requests_view(request:HttpRequest, id:int):
+    try:
+        user = HomeModels.User.objects.get(pk=id)
+        admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+        number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
+        
+        user_requests = user.user_requests.all()
+
+        search = request.GET.get("search", "").strip()
+        if search:
+            user_requests = user_requests.filter(event__title__contains=search)
+
+        data_summary = { 
+        "all": user.user_requests.count(),
+        "new": user.user_requests.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count(),
+        "accepted": user.user_requests.filter(status='accepted').count(),
+        "rejected": user.user_requests.filter(status='rejected').count(),
+        }
+        
+        for req in user_requests: 
+            req.event.startdate_ar = format_arabic_hijri_with_time(req.event.start_datetime)
+            req.event.enddate_ar = format_arabic_hijri_with_time(req.event.end_datetime)
+            
+
+        return render(request, "dashboard/panel/user_requests.html", {
+            'admin' : admin,
+            "number_of_new_requests": number_of_new_requests,
+            "user_requests":user_requests,
+            "data_summary":data_summary
+
+
+                
+            })
+
+    except HomeModels.User.DoesNotExist:
+        return redirect('dashboard:dashboard_users_view')
 
 
 
@@ -452,3 +511,42 @@ def dashboard_logout_view(request:HttpRequest):
     response.set_cookie("admin", 1, max_age=-3600)
 
     return response
+
+
+def dashboard_event_request_status_view(request:HttpRequest, id:int):
+    event = models.Event.objects.get(pk=id)
+    if event:
+        event.is_active = not event.is_active
+        event.save()
+        redirect_url = request.META.get("HTTP_REFERER", "/").split("?")[0]
+        return redirect(f"{redirect_url}?success=True")
+
+
+
+def dashboard_attend_request_view(request: HttpRequest):
+    if request.method == 'POST':
+        for key, value in request.POST.items():
+            if key.startswith('attendence_'):
+                try:
+                    request_id = int(key.replace('attendence_', ''))
+                    event_request = HomeModels.Request.objects.get(id=request_id)
+                    event = event_request.event
+                    event.is_active = False
+                    event.save()
+                    
+                    
+                    if value == 'present':
+                        event_request.status = 'attend'
+                    else:
+                        event_request.status = 'absent'
+
+                    event_request.save()
+
+                    redirect_url = request.META.get("HTTP_REFERER", "/").split("?")[0]
+                    return redirect(f"{redirect_url}?success=True")
+
+                except HomeModels.Request.DoesNotExist as e:
+                    print(e)
+
+    redirect_url = request.META.get("HTTP_REFERER", "/").split("?")[0]
+    return redirect(redirect_url)

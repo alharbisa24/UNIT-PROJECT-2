@@ -6,7 +6,7 @@
 {% block content %}
 <div class="mb-6">
     <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">طلبات الفعاليات</h1>
-    <p class="text-gray-600 dark:text-gray-400 mb-6">إدارة طلبات المشاركة في الفعاليات</p>
+    <p class="text-gray-600 dark:text-gray-400 mb-6">ادارة طلبات المشاركة في الفعاليات</p>
     <form method="GET" action="" class="flex flex-col md:flex-row gap-4 mb-6">
         <div class="relative flex-grow">
             <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
@@ -24,7 +24,15 @@
          
 
             </select>
-            
+            <select name="status" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">جميع الحالات</option>
+                <option value="waiting" {% if request.GET.status == "waiting" %} selected {% endif %}>بانتظار الرد</option>
+                <option value="accepted" {% if request.GET.status == "accepted" %} selected {% endif %}>مقبول</option>
+                <option value="rejected" {% if request.GET.status == "rejected" %} selected {% endif %}>مرفوض</option>
+                <option value="canceled" {% if request.GET.status == "canceled" %} selected {% endif %}>ملغي من المستخدم</option>
+                <option value="attend" {% if request.GET.status == "attend" %} selected {% endif %}>تم الحضور</option>
+                <option value="absent" {% if request.GET.status == "absent" %} selected {% endif %}>غائب</option>
+            </select>
             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition-colors duration-150 ease-in-out">
                 تطبيق
             </button>
@@ -42,6 +50,13 @@
 {% if accepted == "True" %}
 <div class="bg-green-700 my-5 mx-2 p-3 text-center rounded-xl text-white">
     تم قبول الطلب بنجاح !
+  </div>
+  
+  {%endif%}
+  
+{% if request.GET.rejected == "True" %}
+<div class="bg-green-700 my-5 mx-2 p-3 text-center rounded-xl text-white">
+    تم رفض الطلب بنجاح !
   </div>
   
   {%endif%}
@@ -160,6 +175,9 @@
                         <span class="bg-green-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">مقبول</span>
                         {%elif request.status == 'rejected'  %}
                         <span class="bg-red-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">مرفوض</span>
+                        {%elif request.status == 'canceled'  %}
+                        <span class="bg-red-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">ملغي من المستخدم</span>
+                   
                         {% elif request.status == 'attend'  %}
                         <span class="bg-blue-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">تم الحضور</span>
                         {% endif %}
@@ -167,9 +185,15 @@
                     
                     <td class="px-6 py-4 whitespace-nowrap text-left">
                         <div class="flex items-center gap-2">
-                        {% if request.status != 'accepted'  %}
+                        {% if request.status != 'accepted' and request.status != 'attend' and request.status != 'absent'  %}
                             <button class="text-green-400 hover:text-green-300 transition-colors" onclick="confirmAccept(event, '{% url 'dashboard:dashboard_request_accept_view' request.id %}')">
                                 <i class="fas fa-check"></i>
+                            </button>
+                            {% endif %}
+
+                            {% if request.status != 'rejected' and request.status != 'attend' and request.status != 'absent'  %}
+                            <button class="text-red-400 hover:text-red-300 transition-colors" onclick="confirmReject(event, '{% url 'dashboard:dashboard_request_reject_view' request.id %}')">
+                                <i class="fas fa-times"></i>
                             </button>
                             {% endif %}
 
@@ -219,11 +243,28 @@
         event.preventDefault();
         Swal.fire({
             title: 'هل انت متاكد ؟',
-            text: "لن تتمكن من التراجع",
+            text: "سيتم قبول طلب المستخدم",
             icon: 'warning',
             showCancelButton: true,
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'نعم ، اقبل الطلب',
+            cancelButtonText: 'الغاء'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
+    }
+    function confirmReject(event, url) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'هل انت متاكد ؟',
+            text: "سيتم رفض طلب المستخدم",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: 'red',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'نعم ، ارفض الطلب',
             cancelButtonText: 'الغاء'
         }).then((result) => {
             if (result.isConfirmed) {

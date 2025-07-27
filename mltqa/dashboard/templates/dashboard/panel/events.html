@@ -68,25 +68,29 @@
         <div class="relative">
             <div class="h-48 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
                 <img src="{{event.image_url}}" class="w-full h-full object-cover opacity-50" alt="event">
-                <h3 class="absolute bottom-4 right-4 text-xl font-bold text-white">{{event.title}}</h3>
             </div>
             <div class="absolute top-4 left-4">
               {% if event.is_active == True %}
                 <span class=" text-xs font-medium px-2.5 py-0.5 rounded-full bg-green-900 text-green-300 flex items-center gap-1">
                     <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                    فعال
+                    متاح
                 </span>
 
                 {% else %}
                 <span class=" text-xs font-medium px-2.5 py-0.5 rounded-full bg-red-900 text-red-300 flex items-center gap-1">
                     <span class="w-2 h-2 bg-red-500 rounded-full"></span>
-                    غير فعال
+                    غير متاح
                 </span>
                 {% endif %}
 
             </div>
         </div>
+        <div class="p-4">
+            <h3 class=" text-xl font-bold text-white">{{event.title}}</h3>
+
+        </div>
         <div class="p-4 bg-gray-100 dark:bg-gray-700 flex justify-between items-center">
+
             <div class="flex items-center gap-2 text-sm">
                 <i class="fas fa-chair text-blue-600 dark:text-blue-400 w-5"></i>
                 <span class="text-gray-700 dark:text-gray-300">عدد المقاعد: {{ event.available_seats }}</span>

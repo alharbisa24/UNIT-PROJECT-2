@@ -55,6 +55,9 @@
                           <span class="bg-red-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">ملغى من المستخدم</span>
                           {% elif request.status == 'attend'  %}
                           <span class="bg-blue-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">تم الحضور</span>
+                          {% elif request.status == 'absent'  %}
+                          <span class="bg-red-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">غائب</span>
+                        
                           {% endif %}
                         </div>
                   </div>
@@ -81,6 +84,7 @@
                     <form>
                         <div class="mb-3">
                             <label class="block text-gray-700 font-medium mb-2">تقييمك للفعالية</label>
+                        
                             <div class="flex text-2xl cursor-pointer">
                                 <i class="far fa-star text-yellow-400 hover:text-yellow-500 transition-all"></i>
                                 <i class="far fa-star text-yellow-400 hover:text-yellow-500 transition-all"></i>
@@ -88,6 +92,7 @@
                                 <i class="far fa-star text-yellow-400 hover:text-yellow-500 transition-all"></i>
                                 <i class="far fa-star text-yellow-400 hover:text-yellow-500 transition-all"></i>
                             </div>
+                            
                         </div>
                         <div class="mb-3">
                             <label for="review" class="block text-gray-700 font-medium mb-2">تعليقك</label>
@@ -145,23 +150,6 @@
 
 </div>
 
-<!-- Rating Stars Script -->
-<script>
-  // Simple star rating functionality
-  document.addEventListener('DOMContentLoaded', function() {
-      const stars = document.querySelectorAll('.far.fa-star');
-      stars.forEach((star, index) => {
-          star.addEventListener('click', () => {
-              // Reset all stars
-              stars.forEach(s => s.className = 'far fa-star text-yellow-400 hover:text-yellow-500 transition-all');
-              
-              // Fill clicked star and all before it
-              for(let i = 0; i <= index; i++) {
-                  stars[i].className = 'fas fa-star text-yellow-400 hover:text-yellow-500 transition-all';
-              }
-          });
-      });
-  });
-</script>
+
 
 {% endblock %}
