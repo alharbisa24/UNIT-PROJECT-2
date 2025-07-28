@@ -97,18 +97,10 @@
             <img src="{{ data.image_url }}" class="w-sm rounded-2xl">
         </div>
         <div class="mt-2">
-            <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">رفع صورة</label>
-            <div class="flex items-center justify-center w-full">
-                <label for="image" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">اضغط لرفع صورة</span> أو قم بسحب الصورة هنا</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, JPEG (حد أقصى 2MB)</p>
-                    </div>
-                    <input id="image" name="image" type="file" class="hidden" accept="image/png, image/jpeg, image/jpg" onchange="document.getElementById('uploadMessage').textContent = this.files.length > 0 ? 'تم رفع الصورة' : '';">
-                </label>
-            </div>
-            <span id="uploadMessage" class="mt-2 text-sm text-green-600 dark:text-green-400"></span>
+            <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300"> صورة الفعالية </label>
 
+                    <input id="image" name="image" type="file" accept="image/png, image/jpeg, image/jpg" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 p-3 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500">
+        
         </div>
         <div class="mt-2">
             <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">وصف الفعالية</label>
