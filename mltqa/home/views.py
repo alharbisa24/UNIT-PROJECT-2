@@ -50,10 +50,15 @@ def events_view(request:HttpRequest):
         event.dateperiod = f"{event.startdate_ar} - {event.enddate_ar}"
         event.timeperiod = f"{event.start_datetime.strftime('%I:%M %p').replace('AM', 'صباحا').replace('PM', 'مساء')} - {event.end_datetime.strftime('%I:%M %p').replace('AM', 'صباحا').replace('PM', 'مساء')}"
 
+    paginator = Paginator(events, 5) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
 
     return render(request,"home/allevents.html", {
              "events": events,
-        "user":user 
+        "user":user ,
+        "page_obj":page_obj
     })
 
 def event_details_view(request:HttpRequest, id:int):

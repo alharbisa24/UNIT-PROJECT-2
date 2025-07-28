@@ -17,6 +17,7 @@ from urllib.parse import unquote, urlparse
 from datetime import datetime
 import google.generativeai as genai
 import os
+from django.core.paginator import Paginator
 from django.db.models import Avg
 
 load_dotenv()
@@ -166,10 +167,14 @@ def dashboard_events_view(request:HttpRequest):
         event.available_seats_remaining = event.available_seats - event.event_requests.filter(status__in=["accepted", "attend", 'absent']).count()
 
 
+    paginator = Paginator(events, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     return render(request, 'dashboard/panel/events.html',{
                 "admin": admin,
-                'events' : events,
+                'events' : page_obj,
                 'form': form,
                 'success': success,
                 "number_of_new_requests": number_of_new_requests

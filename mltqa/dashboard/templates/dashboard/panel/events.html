@@ -124,7 +124,7 @@
                     <span class="text-gray-700 dark:text-gray-300">تاريخ الإنشاء: {{event.created_at_ar}}</span>
                 </div>
                 
-              
+               
             </div>
         </div>
         
@@ -158,8 +158,26 @@
 {%else%}
 <div class="bg-red-900 text-center p-4 rounded-2xl text-white w-full">لايوجد فعاليات متوفرة حاليا</div>
   {% endif %}
-
-
+<div class="flex justify-center mt-8">
+    <nav class="inline-flex rounded-md shadow-sm -space-x-px rtl:space-x-reverse bg-gray-800 border-gray-700 text-gray-300">
+        <a href="{% if events.has_previous %}?page={{ events.previous_page_number }}{% else %}#{% endif %}" 
+           class="relative inline-flex items-center px-2 py-2 rounded-r-md border bg-gray-700 text-sm font-medium hover:bg-gray-600 {% if not events.has_previous %}opacity-50 cursor-not-allowed{% endif %}">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+        
+        {% for i in events.paginator.page_range %}
+            <a href="?page={{ i }}" 
+           class="relative inline-flex items-center px-4 py-2 border bg-gray-700 text-sm font-medium {% if events.number == i %}text-blue-400 border-blue-500 z-10{% else %}hover:bg-gray-600{% endif %}">
+            {{ i }}
+            </a>
+        {% endfor %}
+        
+        <a href="{% if events.has_next %}?page={{ events.next_page_number }}{% else %}#{% endif %}" 
+           class="relative inline-flex items-center px-2 py-2 rounded-l-md border bg-gray-700 text-sm font-medium hover:bg-gray-600 {% if not events.has_next %}opacity-50 cursor-not-allowed{% endif %}">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+    </nav>
+</div>
 <div id="addEventModal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4 overflow-y-auto hidden animate-fadeIn">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-xl p-6 space-y-6 relative">
         <button onclick="closeModal('addEventModal')" class="absolute top-2 left-2 text-gray-600 hover:text-red-600 text-2xl">&times;</button>
@@ -222,71 +240,6 @@
     </div>
 </div></div>
 
-<div id="usersModal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4 hidden  animate-fadeIn">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl p-8 space-y-6 relative">
-        <button onclick="closeModal('usersModal')" class="absolute top-4 left-4 text-gray-600 hover:text-red-600 text-2xl transition-transform transform hover:scale-110">&times;</button>
-        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">قائمة الزوار</h2>
-        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-            <li class="py-4 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-700 rounded-4xl p-2 px-3 text-white text-sm">ما</div>
-                    <div>
-                        <span class="block text-gray-800 dark:text-gray-200 font-medium">أحمد</span>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">966536009336</span>
-                        <br>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">a@gmail.com</span>
-                    </div>
-                </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400">منذ امس</span>
-
-            </li>
-     
-           
-            <li class="py-4 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-700 rounded-4xl p-2 px-3 text-white text-sm">ما</div>
-                    <div>
-                        <span class="block text-gray-800 dark:text-gray-200 font-medium">أحمد</span>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">966536009336</span>
-                        <br>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">a@gmail.com</span>
-                    </div>
-                </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400">منذ امس</span>
-
-            </li>
-            <li class="py-4 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-700 rounded-4xl p-2 px-3 text-white text-sm">ما</div>
-                    <div>
-                        <span class="block text-gray-800 dark:text-gray-200 font-medium">أحمد</span>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">966536009336</span>
-                        <br>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">a@gmail.com</span>
-                    </div>
-                </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400">منذ امس</span>
-
-            </li>
-            <li class="py-4 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-700 rounded-4xl p-2 px-3 text-white text-sm">ما</div>
-                    <div>
-                        <span class="block text-gray-800 dark:text-gray-200 font-medium">أحمد</span>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">966536009336</span>
-                        <br>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">a@gmail.com</span>
-                    </div>
-                </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400">منذ امس</span>
-
-            </li>
-        </ul>
-        <div class="flex justify-end">
-            <button onclick="closeModal('usersModal')" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all">إغلاق</button>
-        </div>
-    </div>
-</div>
 <script>
     function confirmDelete(event, url) {
         event.preventDefault();
