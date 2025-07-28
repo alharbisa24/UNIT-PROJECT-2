@@ -142,6 +142,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+mltqa/firebase.json
 
 # Spyder project settings
 .spyderproject
