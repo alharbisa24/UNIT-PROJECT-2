@@ -52,7 +52,7 @@
                 
             </p>
         </div>
-        <a href="" class="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 shadow-md">
+        <a href="{% url 'dashboard:ai_recommendations_view' %}" class="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 shadow-md">
             <span>عرض التوصيات</span>
             <i class="fas fa-robot"></i>
         </a>
@@ -124,10 +124,7 @@
                     <span class="text-gray-700 dark:text-gray-300">تاريخ الإنشاء: {{event.created_at_ar}}</span>
                 </div>
                 
-                <a href="{{event.location}}" target="_blank" class="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline text-sm group">
-                    <i class="fas fa-map-marker-alt w-5 transition-transform duration-300 group-hover:scale-125"></i>
-                    <span>عرض الموقع على الخريطة</span>
-                </a>
+              
             </div>
         </div>
         

@@ -44,7 +44,7 @@ class LoginForm(forms.Form):
 
 
 class EventForm(forms.Form):
-    title = forms.CharField(max_length=50,
+    title = forms.CharField(max_length=200,
                              error_messages={
             'required': 'يجب ادخال العنوان',
             'max_length': 'يجب ادخال العنوان بشكل صحيح',

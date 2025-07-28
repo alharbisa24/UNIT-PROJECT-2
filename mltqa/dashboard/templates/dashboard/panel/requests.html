@@ -6,7 +6,6 @@
 {% block content %}
 <div class="mb-6">
     <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">طلبات الفعاليات</h1>
-    <p class="text-gray-600 dark:text-gray-400 mb-6">ادارة طلبات المشاركة في الفعاليات</p>
     <form method="GET" action="" class="flex flex-col md:flex-row gap-4 mb-6">
         <div class="relative flex-grow">
             <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
@@ -177,6 +176,8 @@
                         <span class="bg-red-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">مرفوض</span>
                         {%elif request.status == 'canceled'  %}
                         <span class="bg-red-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">ملغي من المستخدم</span>
+                        {%elif request.status == 'absent'  %}
+                        <span class="bg-red-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">غائب</span>
                    
                         {% elif request.status == 'attend'  %}
                         <span class="bg-blue-500 text-white text-xs px-3 py-1.5 rounded-full md:inline-block block text-center mt-2 md:mt-0">تم الحضور</span>

@@ -1,19 +1,31 @@
+import json
 import random
+import re
 from django.shortcuts import render,redirect
 from django.http import HttpRequest
 from . import forms,models
 from home import models as HomeModels
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from datetime import timedelta
 from django.utils.timezone import now
 from .firebase_config import bucket
-from hijri_converter import convert
 from django.utils import timezone
 from django.utils.timezone import localtime
 from urllib.parse import unquote, urlparse
 from datetime import datetime
+import google.generativeai as genai
+import os
+from django.db.models import Avg
+
+load_dotenv()
+
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+
+genai.configure(api_key=gemini_api_key)
+
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 def dashboard_login_view(request:HttpRequest):
 
@@ -78,14 +90,16 @@ def dashboard_home_view(request:HttpRequest):
         "total_ratings":total_ratings
     })
 
-def format_arabic_hijri_with_time(dt):
+def format_date(dt):
     local_dt = timezone.localtime(dt)
 
-    hijri = convert.Gregorian(
-        local_dt.year,
-        local_dt.month,
-        local_dt.day
-    ).to_hijri()
+    months_ar = [
+        "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+        "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+    ]
+    day = local_dt.day
+    month = months_ar[local_dt.month - 1]
+    year = local_dt.year
 
     hour = local_dt.hour
     minute = local_dt.minute
@@ -93,8 +107,8 @@ def format_arabic_hijri_with_time(dt):
     hour12 = hour if 1 <= hour <= 12 else abs(hour - 12) or 12
 
     time_str = f"{hour12}:{minute:02d} {period}"
+    return f"{day} {month} {year} هـ - الساعة {time_str}"
 
-    return f"{hijri.day} {hijri.month_name('ar')} {hijri.year} هـ - الساعة {time_str}"
 
 
 def generateRandom(num: int):
@@ -146,9 +160,9 @@ def dashboard_events_view(request:HttpRequest):
         events = models.Event.objects.all()
 
     for event in events:
-        event.created_at_ar = format_arabic_hijri_with_time(event.created_at)
-        event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
-        event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
+        event.created_at_ar = format_date(event.created_at)
+        event.startdate_ar = format_date(event.start_datetime)
+        event.enddate_ar = format_date(event.end_datetime)
         event.available_seats_remaining = event.available_seats - event.event_requests.filter(status__in=["accepted", "attend", 'absent']).count()
 
 
@@ -194,8 +208,8 @@ def dashboard_requests_view(request:HttpRequest):
 
     }
     for req in requests:
-            req.event.startdate_ar = format_arabic_hijri_with_time(req.event.start_datetime)
-            req.event.enddate_ar = format_arabic_hijri_with_time(req.event.end_datetime)
+            req.event.startdate_ar = format_date(req.event.start_datetime)
+            req.event.enddate_ar = format_date(req.event.end_datetime)
 
     if request.POST:
         pass
@@ -221,7 +235,8 @@ def dashboard_request_delete_view(request:HttpRequest,id:int):
     if req:
         req.delete()
         redirect_url = request.META.get("HTTP_REFERER")
-        return redirect(f'{redirect_url}?deleted=True')
+        sep = '&' if '?' in redirect_url else '?'
+        return redirect(f'{redirect_url}{sep}deleted=True')
 
 
 
@@ -231,7 +246,8 @@ def dashboard_request_accept_view(request:HttpRequest, id:int):
         req.status='accepted'
         req.save()
         redirect_url = request.META.get("HTTP_REFERER")
-        return redirect(f'{redirect_url}?accepted=True')
+        sep = '&' if '?' in redirect_url else '?'
+        return redirect(f'{redirect_url}{sep}accepted=True')
 
 
 
@@ -241,7 +257,8 @@ def dashboard_request_reject_view(request:HttpRequest, id:int):
         req.status='rejected'
         req.save()
         redirect_url = request.META.get("HTTP_REFERER")
-        return redirect(f'{redirect_url}?rejected=True')
+        sep = '&' if '?' in redirect_url else '?'
+        return redirect(f'{redirect_url}{sep}rejected=True')
 
 
 def dashboard_ratings_view(request:HttpRequest):
@@ -385,7 +402,7 @@ def dashboard_event_edit_view(request:HttpRequest, id:int):
         'start_datetime': localtime(event.start_datetime).strftime('%Y-%m-%dT%H:%M'),
         'end_datetime': localtime(event.end_datetime).strftime('%Y-%m-%dT%H:%M'),
         'is_active': event.is_active,
-        'event_requests':event.event_requests.all()
+        'event_requests':event.event_requests.filter(status__in=['accepted','attend'])
             }
             return render(request, "dashboard/panel/edit_event.html", {
             'admin' : admin,
@@ -404,8 +421,8 @@ def dashboard_event_requests_view(request:HttpRequest, id:int):
         event = models.Event.objects.get(pk=id)
         admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
         number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
-        event.startdate_ar = format_arabic_hijri_with_time(event.start_datetime)
-        event.enddate_ar = format_arabic_hijri_with_time(event.end_datetime)
+        event.startdate_ar = format_date(event.start_datetime)
+        event.enddate_ar = format_date(event.end_datetime)
         
         data_summary = { 
         "all": event.event_requests.count(),
@@ -455,8 +472,8 @@ def dashboard_user_requests_view(request:HttpRequest, id:int):
         }
         
         for req in user_requests: 
-            req.event.startdate_ar = format_arabic_hijri_with_time(req.event.start_datetime)
-            req.event.enddate_ar = format_arabic_hijri_with_time(req.event.end_datetime)
+            req.event.startdate_ar = format_date(req.event.start_datetime)
+            req.event.enddate_ar = format_date(req.event.end_datetime)
             
 
         return render(request, "dashboard/panel/user_requests.html", {
@@ -519,15 +536,14 @@ def dashboard_event_request_status_view(request:HttpRequest, id:int):
         event.is_active = not event.is_active
         event.save()
         redirect_url = request.META.get("HTTP_REFERER", "/").split("?")[0]
-        return redirect(f"{redirect_url}?success=True")
+        sep = '&' if '?' in redirect_url else '?'
+        return redirect(f"{redirect_url}{sep}success=True")
 
 
 
 def dashboard_attend_request_view(request: HttpRequest):
     if request.method == 'POST':
-        print(request.POST)
         for key, value in request.POST.items():
-            print(key)
             if key.startswith('attendence_'):
                 try:
                     request_id = int(key.replace('attendence_', ''))
@@ -564,8 +580,8 @@ def dashboard_ratings_view(request:HttpRequest):
         try:
             ratings = HomeModels.Rating.objects.all()
             for rating in ratings:
-                rating.event.startdate_ar = format_arabic_hijri_with_time(rating.event.start_datetime)
-                rating.event.enddate_ar = format_arabic_hijri_with_time(rating.event.end_datetime)
+                rating.event.startdate_ar = format_date(rating.event.start_datetime)
+                rating.event.enddate_ar = format_date(rating.event.end_datetime)
         
         except HomeModels.Rating.DoesNotExist:
             print("error")
@@ -598,3 +614,106 @@ def dashboard_ratings_update_status_view(request:HttpRequest,id:int):
         rating.save()
         redirect_url = request.META.get("HTTP_REFERER", "/").split("?")[0]
         return redirect(f"{redirect_url}?success=True")
+    
+
+
+def ai_recommendations_view(request:HttpRequest):
+    admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+    number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
+    total_events = HomeModels.Event.objects.count()
+    total_requests = HomeModels.Request.objects.count()
+    avg_rating = HomeModels.Rating.objects.aggregate(avg=Avg('stars'))['avg'] or 0
+    avg_rating = round(avg_rating, 1)
+
+    attended = HomeModels.Request.objects.filter(status='attend').count()
+    attendance_rate = round((attended / total_requests) * 100) if total_requests > 0 else 0
+
+    event_titles = list(HomeModels.Event.objects.values_list('title', flat=True))
+
+    recommendations = []
+    ai_summary = ""
+    upcoming_trends = []
+    user_data = {}
+    content_ideas = []
+    
+    try:
+        titles_text = "\n".join(event_titles)
+        prompt = f"""
+            You are an AI advisor for an Arabic event management platform. our platform has:
+            - {total_events} total events
+            - {total_requests} registration requests
+            - {attendance_rate}% attendance rate
+            - {avg_rating}/5 average rating
+            
+            events titles: {titles_text}
+            
+            Generate the following in arabic language:
+            1. analyze events titles and generate best 4-6 categories based on events titles
+
+            1. A summary paragraph analyzing overall platform performance (3-4 sentences)
+            
+            2. three detailed recommendations with these fields:
+               - title: A short title
+               - description: A detailed explanation (2-3 sentences)
+               - importance: "high" or "medium"
+            
+            3. two upcoming trends in event management with:
+               - title: The trend name
+               - description: Brief explanation of the trend
+            
+            4. user behavior analysis with:
+               - active_percentage: Percentage of active users (between 40-80)
+               - engagement_analysis: A sentence explaining user engagement
+               - popular_times: Array of 3 objects with day_name (like "الاحد") and time (like "5:30 مساءً")
+               - time_analysis: A sentence about optimal scheduling
+            
+            5. two content ideas with:
+               - title: Content title
+               - category: Content type (like "ورشة عمل" or "محاضرة")
+               - description: Brief description
+            
+            Format your response as valid JSON with these 5 keys:
+            - categories : array contains categories title and each title contain (category,count,growth)
+            - ai_summary
+            - recommendations (array)
+            - upcoming_trends (array)
+            - user_data (object)
+            - content_ideas (array)
+            
+            Only respond with valid JSON, no other text.
+            """
+            
+        response = model.generate_content(prompt)
+        text = response.candidates[0].content.parts[0].text
+
+        clean_text = re.sub(r"^```json\s*|\s*```$", "", text.strip(), flags=re.MULTILINE)
+
+        data = json.loads(clean_text)
+        categories = data.get('categories', [])
+        ai_summary = data.get('ai_summary', '')
+        recommendations = data.get('recommendations', [])
+        upcoming_trends = data.get('upcoming_trends', [])
+        user_data = data.get('user_data', {})
+        content_ideas = data.get('content_ideas', [])
+    except Exception as e:
+        print(e)
+        return redirect('/dashboard')
+  
+            
+
+
+    return render(request, "dashboard/panel/ai_recommendations.html",{
+        'total_events': total_events,
+        'ai_summary': ai_summary,
+        'total_requests': total_requests,
+        'upcoming_trends': upcoming_trends,
+        "attendance_rate":attendance_rate,
+        'categories': categories,
+        'avg_rating': round(avg_rating, 1),
+        'recommendations': recommendations,
+        'user_data': user_data,
+        'content_ideas': content_ideas,
+        "admin": admin,
+        "number_of_new_requests": number_of_new_requests
+    })
+

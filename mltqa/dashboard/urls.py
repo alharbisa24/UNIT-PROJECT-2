@@ -27,5 +27,6 @@ urlpatterns = [
     path('ratings/', views.dashboard_ratings_view, name="dashboard_ratings_view"),
     path('ratings/<id>/delete/', views.dashboard_ratings_delete_view, name="dashboard_ratings_delete_view"),
     path('ratings/<id>/update_status/', views.dashboard_ratings_update_status_view, name="dashboard_ratings_update_status_view"),
+    path('ai_recommendations/', views.ai_recommendations_view, name="ai_recommendations_view")
 
 ]

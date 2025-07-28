@@ -15,6 +15,7 @@ class RegisterForm(forms.Form):
                              error_messages={
             'required': 'يجب ادخال رقم الجوال',
             'max_length': 'يجب ادخال رقم الجوال بشكل صحيح',
+            'unique': 'رقم الجوال موجود مسبقا',
         },)
     password = forms.CharField(min_length=8,
         widget=forms.PasswordInput,

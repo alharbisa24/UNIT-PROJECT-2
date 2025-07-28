@@ -2,8 +2,8 @@ from django.db import models
 from dashboard.models import * 
 class User(models.Model):
     full_name=models.CharField(max_length=50)
-    email=models.CharField(max_length=50)
-    phone=models.CharField(max_length=50)
+    email=models.CharField(max_length=50,unique=True)
+    phone=models.CharField(max_length=50,unique=True)
     password = models.TextField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)   
 
