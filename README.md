@@ -1,136 +1,62 @@
 # UNIT-PROJECT-2
 
-## Create a Project of your own choosing
 
-Base on what you’ve learned until now , create a project of your choosing. Impress us with your creativity and execution.
+## Mltqa :
 
-
-## Minimum Requirements
-- Use Django.
-- Use Templates & Template Inheritance.
-- Use static, media & dynamic urls as needed.
-- Organize your project in apps as needed.
-- Use models to represent you data.
-- Use a CSS library to style your website.
-- Must be responsive (good looking of big screens and small screens).
-- Use naming conventions & best practices.
-- Strive to make the user journey intuitive and complete.
-
-## Use python-dotenv to save your sensitive data.
-- https://pypi.org/project/python-dotenv/
+#### Overview: Mltqa is an event management platform that helps organize and manage technical and general events seamlessly. It streamlines planning, registration, and attendee engagement for conferences, workshops, and public gatherings.
 
 
-## Use a CDN or cloud storage provider to sore your large static files (videos, images, etc.), such as:
-- https://firebase.google.com/docs/storage
-
-## Use Git & Github to manage and track changes in your project.
-- At lease commit and sync the changes once at the end of everyday.
-
-## Edit the README.md file to include (include the info at the top):
-- Project Name
-- Project Description
-- Features list.
-- User Stories (link or file)
-- UML (link or file)
-- Wireframe (link or file)
-
-
-## Example Projects :
-
-
-1. **Task Management System:**
-- **Overview:** Create a platform for managing tasks and projects within a team or organization.
-- **Features:**
-- Task creation, assignment, and tracking.
-- Project management with milestones.
-- File uploads and comments on tasks.
-- Notification system for task updates.
+### User Stories
+#### As a user I should be able to do the following :
+ 1) login
+ 2) register
+ 3) show last events
+ 3) show all events
+ 4) show event details
+ 5) show profile page
+ 6) update profile information
+ 7) change password
+ 8) book an event
+ 9) show last bookings for my account
+ 10) cancel my booking for event before sign attendees
+ 11) add rate, comment to an event when event completed
+ 12) logout
 
 
+#### As a Admin I should be able to do the following :
+ 1) login
+ 2) show home page that display simple summary
+ 3) show all events information
+ 4) search for event
+ 5) show analysis and recomendations using AI
+ 6) show all event attendees
+ 7) show a number of all requests, new requests, accepted requests, rejected requests
+ 8) accept a request for an event
+ 9) reject a request for an event
+ 10) delete a request for an event
+ 11) edit event information
+ 12) open or close book for an event
+ 13) sign attendees for an event
+ 14) delete an event
+ 15) show all requests
+ 16) filter requests by event title
+ 17) filter requests by request status
+ 18) show all events rating
+ 19) hide a rating for event
+ 20) show a rating for event
+ 21) delete a rating
+ 22) show all users information (fullname, email, phone, created date/time, number of requests)
+ 23) show all user requests
+ 24) delete a user
+ 25) add admin
+ 26) show all admins information (fullname, email, created date/time)
+ 27) logout
 
 
-**Online Learning Platform:**
-
-- **Overview:** Develop a platform for online courses, quizzes, and educational resources.
-- **Features:**
-- Course creation and enrollment.
-- Quiz and assessment functionalities.
-- Progress tracking and certificates.
-
+### UML
+![UML](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/UML.png)
 
 
 
-**Crowdfunding Platform:**
-
-- **Overview:** Build a crowdfunding website where users can create campaigns and seek financial support for their projects.
-- **Features:**
-    -  project history.
-    - Campaign creation and customization.
-    - Payment integration for contributions.
-    - Progress tracking and updates.
-
-**Job Board and Recruitment System:**
-
-- **Overview:** Develop a platform for job seekers and employers to connect.
-- **Features:**
-    - User profiles with resumes.
-    - Job posting and application functionalities.
-    - Search and filter options for jobs.
-    - Employer dashboards for managing postings.
-
-
-**Inventory Management System:**
-
-- **Overview:** Build a system for tracking and managing inventory for businesses.
-- **Features:**
-    - Product catalog with stock levels.
-    - Order processing and tracking.
-    - Reporting and analytics.
-
-
-**Recipe Sharing Platform:**
-
-- **Overview:** Create a platform where users can share and discover recipes.
-- **Features:**
-    - saved recipes.
-    - Recipe creation and editing.
-    - Search and categorization of recipes.
-    - User ratings and reviews.
-      
-## Resources:
-
-**Free high quality images :**
-
-- https://www.pexels.com/
-- https://unsplash.com
-
-**Free sounds website:**
-
-- https://mixkit.co/
-
-**Free stock videos:**
-
-- https://pixabay.com/videos/
-
-**Free Fonts:**
-
-- https://fonts.google.com
-
-**Free Icons**
-
-- https://fonts.google.com/icons
-- https://icons.getbootstrap.com/
-
-**CSS Library:**
-
-- https://getbootstrap.com/
-- https://get.foundation/index.html
-
-**CSS Animation libraries:**
-
-- https://animate.style
-- https://www.minimamente.com/project/magic/
-
-
-
- 
+### WireFrame
+![wireframe](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/UML.png)
