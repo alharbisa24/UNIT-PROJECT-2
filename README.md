@@ -86,7 +86,7 @@
 ![DashboardEvents](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/dashboard_events.png)
 
 ### Event update
-![DashboardEventUpdate](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/dashboard_update.png)
+![DashboardEventUpdate](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/event_update.png)
 
 ### All requests
 ![DashboardRequests](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/all_requests.png)
