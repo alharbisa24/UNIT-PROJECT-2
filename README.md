@@ -1,13 +1,13 @@
 # UNIT-PROJECT-2
 
 
-## Mltqa :
+# Mltqa :
 
 #### Overview: Mltqa is an event management platform that helps organize and manage technical and general events seamlessly. It streamlines planning, registration, and attendee engagement for conferences, workshops, and public gatherings.
 
 
-### User Stories
-#### As a user I should be able to do the following :
+## User Stories
+### As a user I should be able to do the following :
  1) login
  2) register
  3) show last events
@@ -23,7 +23,7 @@
  12) logout
 
 
-#### As a Admin I should be able to do the following :
+### As a Admin I should be able to do the following :
  1) login
  2) show home page that display simple summary
  3) show all events information
@@ -53,10 +53,55 @@
  27) logout
 
 
-### UML
+## UML
 ![UML](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/UML.png)
 
 
 
-### WireFrame
-![wireframe](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/UML.png)
+## WireFrame
+
+## Home pages
+### Home
+![Home](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/home.png)
+
+### Events
+![Events](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/events.png)
+
+### Event Details
+![Events](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/event_details.png)
+
+### History
+![History](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/history.png)
+
+### Profile
+![History](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/profile.png)
+
+
+## Dashboard
+
+### Home
+![DashboardHome](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/dashboard_home.png)
+
+### Events
+![DashboardEvents](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/dashboard_events.png)
+
+### Event update
+![DashboardEventUpdate](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/event_update.png)
+
+### All requests
+![DashboardRequests](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/all_requests.png)
+
+### Event requests
+![DashboardEventRequests](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/event_requests.png)
+
+### AI recommendations
+![DashboardAI](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/ai_recommendations.png)
+
+### Ratings
+![DashboardRatings](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/ratings.png)
+
+### Users
+![DashboardUsers](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/users.png)
+
+### Admins
+![DashboardAdmins](https://raw.githubusercontent.com/alharbisa24/UNIT-PROJECT-2/main/wireframes/admins.png)
