@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<div class="bg-gradient-to-br from-blue-900 to-blue-950 text-white py-12 px-6 rounded-3xl shadow-lg mb-8">
+<div class="bg-gradient-to-br from-blue-900 to-blue-950 text-white py-12 px-6 rounded-3xl shadow-lg mb-8 animate-fade">
   <div class="container mx-auto max-w-5xl">
     <div class="flex flex-col md:flex-row items-center justify-between">
       <div class="flex items-center gap-4 mb-4 md:mb-0">
@@ -19,23 +19,23 @@
       </div>
 
     <div class="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
-      <div class="bg-blue-800 p-4 rounded-lg shadow-md">
+      <div class="bg-black p-4 rounded-lg shadow-md">
         <span class="block text-4xl font-extrabold">{{ data.all_events }}</span>
         <span class="text-blue-200 text-sm">الطلبات</span>
       </div>
-      <div class="bg-blue-800 p-4 rounded-lg shadow-md">
+      <div class="bg-green-800 p-4 rounded-lg shadow-md">
         <span class="block text-4xl font-extrabold">{{ data.accepted_events }}</span>
         <span class="text-blue-200 text-sm">المقبولة</span>
       </div>
-      <div class="bg-orange-800 p-4 rounded-lg shadow-md">
+      <div class="bg-red-800 p-4 rounded-lg shadow-md">
         <span class="block text-4xl font-extrabold">{{ data.rejected_events }}</span>
         <span class="text-blue-200 text-sm">المرفوضة</span>
       </div>
-      <div class="bg-green-800 p-4 rounded-lg shadow-md">
+      <div class="bg-blue-800 p-4 rounded-lg shadow-md">
         <span class="block text-4xl font-extrabold">{{ data.attended_events }}</span>
         <span class="text-blue-200 text-sm">الحضور</span>
       </div>
-      <div class="bg-red-800 p-4 rounded-lg shadow-md">
+      <div class="bg-orange-800 p-4 rounded-lg shadow-md">
         <span class="block text-4xl font-extrabold">{{ data.absent_events }}</span>
         <span class="text-blue-200 text-sm">الغياب</span>
       </div>
@@ -81,7 +81,7 @@
 </div>
 </div>
 {% endif %}
-<div class="container mx-auto max-w-7xl px-6 pb-16">
+<div class="container mx-auto max-w-7xl px-6 pb-16 animate-fade">
   
   <div class="space-y-8">
     <div class="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-100">

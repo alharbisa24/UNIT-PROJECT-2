@@ -5,7 +5,7 @@
 
 {% block content %} 
 
-<div class="bg-gradient-to-br from-blue-900 to-blue-950 text-white py-12 px-6 rounded-3xl shadow-lg mb-8">
+<div class="bg-gradient-to-br from-blue-900 to-blue-950 text-white py-12 px-6 rounded-3xl shadow-lg mb-8 animate-fade">
   <div class="container mx-auto max-w-5xl text-center">
       <h1 class="text-3xl lg:text-4xl font-bold mb-4">سجل الحضور</h1>
       <p class="text-blue-100">سجل طلباتك لحضور الفعاليات </p>
@@ -28,7 +28,7 @@
  </div>
  {% endif %}
 
-<div class="container mx-auto max-w-7xl px-6 pb-16">
+<div class="container mx-auto max-w-7xl px-6 pb-16 animate-fade">
   <div class="space-y-6">
     {% if requests %}
     {% for request in requests %}

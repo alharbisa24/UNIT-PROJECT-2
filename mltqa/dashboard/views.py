@@ -640,7 +640,6 @@ def ai_recommendations_view(request:HttpRequest):
 
     recommendations = []
     ai_summary = ""
-    upcoming_trends = []
     user_data = {}
     content_ideas = []
     
@@ -665,26 +664,21 @@ def ai_recommendations_view(request:HttpRequest):
                - description: A detailed explanation (2-3 sentences)
                - importance: "high" or "medium"
             
-            3. two upcoming trends in event management with:
-               - title: The trend name
-               - description: Brief explanation of the trend
-            
-            4. user behavior analysis with:
+            3. user behavior analysis with:
                - active_percentage: Percentage of active users (between 40-80)
                - engagement_analysis: A sentence explaining user engagement
                - popular_times: Array of 3 objects with day_name (like "الاحد") and time (like "5:30 مساءً")
                - time_analysis: A sentence about optimal scheduling
             
-            5. two content ideas with:
+            4. two content ideas with:
                - title: Content title
                - category: Content type (like "ورشة عمل" or "محاضرة")
                - description: Brief description
             
             Format your response as valid JSON with these 5 keys:
-            - categories : array contains categories title and each title contain (category,count,growth)
+            - categories : array contains categories title and each title contain (category,count)
             - ai_summary
             - recommendations (array)
-            - upcoming_trends (array)
             - user_data (object)
             - content_ideas (array)
             
@@ -700,7 +694,6 @@ def ai_recommendations_view(request:HttpRequest):
         categories = data.get('categories', [])
         ai_summary = data.get('ai_summary', '')
         recommendations = data.get('recommendations', [])
-        upcoming_trends = data.get('upcoming_trends', [])
         user_data = data.get('user_data', {})
         content_ideas = data.get('content_ideas', [])
     except Exception as e:
@@ -714,7 +707,6 @@ def ai_recommendations_view(request:HttpRequest):
         'total_events': total_events,
         'ai_summary': ai_summary,
         'total_requests': total_requests,
-        'upcoming_trends': upcoming_trends,
         "attendance_rate":attendance_rate,
         'categories': categories,
         'avg_rating': round(avg_rating, 1),
