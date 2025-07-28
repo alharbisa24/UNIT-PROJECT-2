@@ -6,14 +6,6 @@
 {% block content %} 
 
 <section class="relative min-h-[65vh] w-full bg-gradient-to-b from-blue-900 to-blue-950 overflow-hidden flex items-center py-16 rounded-3xl">
-    <div class="absolute inset-0 pointer-events-none overflow-hidden">
-      <div class="absolute top-0 left-0 w-full h-full">
-        <div class="absolute top-[10%] left-[15%] w-72 h-72 rounded-full bg-blue-500 opacity-10 blur-3xl"></div>
-        <div class="absolute bottom-[20%] right-[10%] w-96 h-96 rounded-full bg-blue-400 opacity-10 blur-3xl"></div>
-      </div>
-      
-      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIvPjwvZz48L2c+PC9zdmc+')] opacity-40"></div>
-    </div>
   
     <div class="container mx-auto px-6 relative">
       <div class="max-w-2xl mx-auto text-center">
@@ -69,7 +61,7 @@
             {% for event in events %}
             <div class="animate-fade">
                 <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 h-full flex flex-col group border border-gray-100 hover:border-cyan-200 hover:-translate-y-1">
-                    <div class="relative h-60 overflow-hidden">
+                    <div class="relative h-68 overflow-hidden">
                         <img src="{{event.image_url}}" alt="image"  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                         <div class="absolute top-0 right-0 m-4">
                             {% if event.is_active == True %}

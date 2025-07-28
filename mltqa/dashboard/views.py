@@ -200,11 +200,12 @@ def dashboard_requests_view(request:HttpRequest):
     
     deleted = request.GET.get('deleted', "false")
     accepted = request.GET.get('accepted', "False")
+    all_requests = HomeModels.Request.objects.all()
     data_summary = { 
-        "all": requests.count(),
-        "new": requests.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count(),
-        "accepted": requests.filter(status='accepted').count(),
-        "rejected": requests.filter(status='rejected').count(),
+        "all": all_requests.count(),
+        "new": all_requests.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count(),
+        "accepted": all_requests.filter(status='accepted').count(),
+        "rejected": all_requests.filter(status='rejected').count(),
 
     }
     for req in requests:
@@ -264,7 +265,7 @@ def dashboard_request_reject_view(request:HttpRequest, id:int):
 def dashboard_ratings_view(request:HttpRequest):
     if not 'admin' in request.COOKIES:
         return redirect('dashboard:dashboard_login_view')
-    pass
+    
 
 
 def dashboard_users_view(request:HttpRequest):
@@ -579,12 +580,14 @@ def dashboard_ratings_view(request:HttpRequest):
     else:
         try:
             ratings = HomeModels.Rating.objects.all()
-            for rating in ratings:
-                rating.event.startdate_ar = format_date(rating.event.start_datetime)
-                rating.event.enddate_ar = format_date(rating.event.end_datetime)
-        
+
         except HomeModels.Rating.DoesNotExist:
             print("error")
+            
+    for rating in ratings:
+        rating.event.startdate_ar = format_date(rating.event.start_datetime)
+        rating.event.enddate_ar = format_date(rating.event.end_datetime)
+
 
     admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
     number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()

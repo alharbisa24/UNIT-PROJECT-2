@@ -1,7 +1,7 @@
 {% extends 'dashboard/panel/base.html' %}
 {% load static %}
 
-{% block title %} لوحة التحكم - ادارة المشرفين {% endblock %}
+{% block title %} لوحة التحكم - ادارة المستخدمين {% endblock %}
 
 {% block content %}
 <div class="mb-6">
@@ -29,7 +29,6 @@
     {%endif%}
 
     <div class="flex flex-col md:flex-row gap-4 mb-6 items-center">
-        <div class="flex-grow">
             <form method="get" action="{% url 'dashboard:dashboard_users_view' %}" class="w-full">
                 <div class="relative">
                     <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
@@ -38,7 +37,6 @@
                     <input type="text"  name="search" value="{{request.GET.search}}"  class="bg-white dark:bg-gray-800 w-full pr-10 pl-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white" placeholder="بحث بالاسم الكامل...">
                 </div>
             </form>
-        </div>
     </div>
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
         <div class="overflow-x-auto">

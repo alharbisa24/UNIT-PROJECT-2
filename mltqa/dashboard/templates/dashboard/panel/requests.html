@@ -1,11 +1,12 @@
 {% extends 'dashboard/panel/base.html' %}
 {% load static %}
 
-{% block title %} الطلبات {% endblock %}
+{% block title %} لوحة التحكم - الطلبات {% endblock %}
 
 {% block content %}
 <div class="mb-6">
     <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">طلبات الفعاليات</h1>
+    
     <form method="GET" action="" class="flex flex-col md:flex-row gap-4 mb-6">
         <div class="relative flex-grow">
             <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
@@ -14,14 +15,12 @@
             <input type="text" name="search" class="bg-white dark:bg-gray-800 w-full pr-10 pl-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white" placeholder="بحث بالاسم الكامل..." minlength="3" value="{{request.GET.search}}">
         </div>
         
-        <div class="flex gap-3">
+        <div class="flex flex-col md:flex-row gap-3">
             <select name="event" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-blue-500 focus:border-blue-500">
                 <option value="">جميع الفعاليات</option>
-        {% for event in events %}
+                {% for event in events %}
                 <option value="{{event.id}}" {% if request.GET.event == event.id|stringformat:"s" %} selected {% endif %}>{{event.title}}</option>
                 {% endfor %}
-         
-
             </select>
             <select name="status" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-white rounded-lg px-4 py-2.5 focus:ring-blue-500 focus:border-blue-500">
                 <option value="">جميع الحالات</option>
@@ -36,6 +35,7 @@
                 تطبيق
             </button>
         </div>
+        
     </form>
 
     {% if deleted == "True" %}
