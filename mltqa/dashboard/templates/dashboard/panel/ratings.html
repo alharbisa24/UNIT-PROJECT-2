@@ -98,12 +98,12 @@
                     <div class="flex items-center justify-start gap-3 h-full">
                         {% if rating.status == False %}
                         <a class="text-green-400 hover:text-green-300 transition-colors" href="{% url 'dashboard:dashboard_ratings_update_status_view' rating.id %}">
-                            <i class="fas fa-check"></i>
+                            <i class="fas fa-eye"></i>
                         </a>
                         {% endif %}
                         {% if rating.status == True %}
                         <a class="text-red-400 hover:text-red-300 transition-colors" href="{% url 'dashboard:dashboard_ratings_update_status_view' rating.id %}">
-                            <i class="fas fa-times"></i>
+                            <i class="fas fa-eye-slash"></i>
                         </a>
                         {% endif %}
                         <a href="#" onclick="confirmDelete(event, '{% url 'dashboard:dashboard_ratings_delete_view' rating.id %}')" class="text-red-400 hover:text-red-300 transition-colors">
