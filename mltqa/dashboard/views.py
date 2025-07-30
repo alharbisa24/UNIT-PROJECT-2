@@ -48,12 +48,8 @@ def dashboard_login_view(request:HttpRequest):
             except models.Admin.DoesNotExist:
                     form.add_error('email', 'البريد الالكتروني غير موجود ')
 
-            else:
-                print("error")
-                form = forms.LoginForm() 
 
     else:
-        print("error2")
         form = forms.LoginForm()
 
     return render(request, 'dashboard/login.html', {
