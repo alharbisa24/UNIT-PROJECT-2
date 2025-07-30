@@ -14,7 +14,7 @@ class Event(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True)
     image_url = models.URLField(null=True)
-    location = models.CharField(max_length=255)
+    location = models.CharField(max_length=350)
     available_seats = models.IntegerField(default=50)
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
