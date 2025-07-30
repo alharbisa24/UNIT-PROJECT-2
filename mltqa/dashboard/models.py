@@ -2,8 +2,8 @@ from django.db import models
 
 class Admin(models.Model):
    full_name= models.CharField(max_length=50)
-   email = models.TextField(max_length=50)
-   password = models.TextField(max_length=300)
+   email = models.TextField()
+   password = models.TextField()
    created_at = models.DateTimeField(auto_now_add=True)
    def __str__(self):
         return self.full_name
@@ -14,7 +14,7 @@ class Event(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True)
     image_url = models.URLField(null=True)
-    location = models.TextField(max_length=350)
+    location = models.TextField()
     available_seats = models.IntegerField(default=50)
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
