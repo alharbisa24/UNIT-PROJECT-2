@@ -41,7 +41,10 @@ def home_view(request:HttpRequest):
 
 
 def events_view(request:HttpRequest):
-    user = User.objects.get(pk=request.COOKIES.get('user'))
+    if 'user' in request.COOKIES:
+        user = User.objects.get(pk=request.COOKIES.get('user'))
+    else:
+        user = None
     events = Event.objects.all().order_by('-created_at')
     
     for event in events:

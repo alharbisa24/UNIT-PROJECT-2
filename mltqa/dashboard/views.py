@@ -69,9 +69,9 @@ def dashboard_home_view(request:HttpRequest):
     total_events = models.Event.objects.count()
     total_active_events = models.Event.objects.filter(is_active=True).count()
     total_expired_events = models.Event.objects.filter(is_active=False).count()
-    total_users= HomeModels.Request.objects.count()
+    total_users= HomeModels.User.objects.count()
     total_requests = HomeModels.Request.objects.count()
-    total_admins= HomeModels.Request.objects.count()    
+    total_admins= models.Admin.objects.count()    
     total_ratings= HomeModels.Rating.objects.count()    
 
 

@@ -13,7 +13,7 @@
 
   
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-500 overflow-x-hidden w-full">
+<body class="bg-gray-900 min-h-screen transition-colors duration-500 overflow-x-hidden w-full">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden" aria-hidden="true"></div>
     
     <div class="flex h-screen overflow-y-hidden">
@@ -103,7 +103,7 @@
             {% else %}
                 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800
             {% endif %}">
-                <i class="fas fa-users w-5 {% if request.path == '/dashboard/admins/' %}text-cyan-600 dark:text-cyan-400{% else %}text-gray-400 dark:text-gray-500{% endif %}"></i>
+                <i class="fas fa-user-shield w-5 {% if request.path == '/dashboard/admins/' %}text-cyan-600 dark:text-cyan-400{% else %}text-gray-400 dark:text-gray-500{% endif %}"></i>
                 <span>المشرفين</span>
             </a>
             

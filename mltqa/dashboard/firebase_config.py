@@ -1,16 +1,18 @@
+import os
+import json
 import firebase_admin
 from firebase_admin import credentials, storage
-import os 
+from dotenv import load_dotenv
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv()  
 
-SERVICE_ACCOUNT_PATH = os.path.join(BASE_DIR, "../firebase.json")
+firebase_credentials = os.getenv("FIREBASE_CREDENTIALS")
 
 if not firebase_admin._apps:
-    cred = credentials.Certificate(SERVICE_ACCOUNT_PATH)
+    cred_dict = json.loads(firebase_credentials)
+    cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred, {
         'storageBucket': 'mltqa-9864c.firebasestorage.app' 
     })
-    
 
 bucket = storage.bucket()
