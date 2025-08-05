@@ -57,7 +57,7 @@ def dashboard_login_view(request:HttpRequest):
 
 
 def dashboard_home_view(request:HttpRequest):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated and not request.user.is_superuser:
         return redirect('dashboard:dashboard_login_view')
     
     admin = request.user
@@ -114,7 +114,7 @@ def generateRandom(num: int):
     return result
 
 def dashboard_events_view(request:HttpRequest):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated and not request.user.is_superuser:
         return redirect('dashboard:dashboard_login_view')
     
     success = False
@@ -181,7 +181,7 @@ def dashboard_events_view(request:HttpRequest):
 
 
 def dashboard_requests_view(request:HttpRequest):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated and not request.user.is_superuser:
         return redirect('dashboard:dashboard_login_view')
     events =  models.Event.objects.all()
     requests = HomeModels.Request.objects.all()
@@ -264,13 +264,13 @@ def dashboard_request_reject_view(request:HttpRequest, id:int):
 
 
 def dashboard_ratings_view(request:HttpRequest):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated and not request.user.is_superuser:
         return redirect('dashboard:dashboard_login_view')
     
 
 
 def dashboard_users_view(request:HttpRequest):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated and not request.user.is_superuser:
         return redirect('dashboard:dashboard_login_view')
     success = False
  
@@ -302,7 +302,7 @@ def dashboard_users_delete_view(request:HttpRequest,id:int):
 
 
 def dashboard_admins_view(request: HttpRequest):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated and not request.user.is_superuser:
         return redirect('dashboard:dashboard_login_view')
     success = False
  
@@ -577,7 +577,7 @@ def dashboard_attend_request_view(request: HttpRequest):
     return redirect(redirect_url)
 
 def dashboard_ratings_view(request:HttpRequest):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated and not request.user.is_superuser:
         return redirect('dashboard:dashboard_login_view')
  
  
