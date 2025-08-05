@@ -21,28 +21,42 @@
 
         
         <div>
-            <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1"> الاسم الكامل</label>
+            <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1"> الاسم الاول</label>
             <div class="relative">
               <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                 <i class="fas fa-user text-gray-400"></i>
               </div>
-              <input id="full_name" name="full_name" type="text" required 
+              <input id="first_name" name="first_name" type="text" required 
                     class="appearance-none block w-full pr-10 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150" 
-                    placeholder="الاسم الكامل">
+                    placeholder=" الاسم الاول">
             </div>
           </div>
 
 
-   
+
+         
           <div>
-            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1"> رقم الجوال</label>
+            <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1"> الاسم الاخير</label>
             <div class="relative">
               <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <i class="fas fa-phone text-gray-400"></i>
+                <i class="fas fa-user text-gray-400"></i>
               </div>
-              <input id="phone" name="phone" type="text" required 
+              <input id="last_name" name="last_name" type="text" required 
                     class="appearance-none block w-full pr-10 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150" 
-                    placeholder="رقم الجوال ">
+                    placeholder=" الاسم الاخير">
+            </div>
+          </div>
+
+       
+          <div>
+            <label for="username" class="block text-sm font-medium text-gray-700 mb-1"> اسم المستخدم</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <i class="fas fa-user text-gray-400"></i>
+              </div>
+              <input id="username" name="username" type="text" required 
+                    class="appearance-none block w-full pr-10 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150" 
+                    placeholder="username">
             </div>
           </div>
 
@@ -106,9 +120,9 @@
       
       <div class="mt-6 text-center">
         <p class="text-sm text-gray-600">
-          ليس لديك حساب؟
-          <a href="{% url 'home:register_view' %}" class="font-medium text-blue-600 hover:text-blue-500 transition duration-150">
-            إنشاء حساب جديد
+          لديك حساب سابق؟ 
+          <a href="{% url 'home:login_view' %}" class="font-medium text-blue-600 hover:text-blue-500 transition duration-150">
+            تسجيل الدخول
           </a>
         </p>
       </div>

@@ -127,7 +127,7 @@
       
       {% if event.is_active == True %}
       {% if event.available_seats_remaining > 0 %}
-      {% if 'user' in request.COOKIES %}
+      {% if request.user.is_authenticated %}
         {% if user_has_request == True %}
           <p class="text-gray-500 text-sm mt-4 text-center">
             يوجد حجز سابق للفعالية

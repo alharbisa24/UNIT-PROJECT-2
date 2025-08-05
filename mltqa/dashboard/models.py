@@ -1,14 +1,5 @@
 from django.db import models
-
-class Admin(models.Model):
-   full_name= models.CharField(max_length=50)
-   email = models.TextField()
-   password = models.TextField()
-   created_at = models.DateTimeField(auto_now_add=True)
-   def __str__(self):
-        return self.full_name
-    
-
+from django.contrib.auth.models import User
 
 class Event(models.Model):
     title = models.CharField(max_length=200)
@@ -18,7 +9,7 @@ class Event(models.Model):
     available_seats = models.IntegerField(default=50)
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
-    created_by = models.ForeignKey(Admin, on_delete=models.CASCADE, related_name='events')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin_events')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

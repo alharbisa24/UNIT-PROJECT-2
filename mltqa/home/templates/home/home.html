@@ -19,7 +19,7 @@
         والعديد من الأنشطة والورش التي تساعدك على تطوير مهاراتك التقنية والتواصل مع خبراء المجال.
         </p>
   
-        {% if 'user' not in request.COOKIES %}
+        {% if not request.user.is_authenticated %}
     <div class="flex flex-wrap gap-4 justify-center">
         <a href="{% url 'home:register_view' %}" class="group inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-base font-medium px-8 py-3 rounded-full shadow-lg hover:from-green-600 hover:to-green-700 transition-all">
         <span>انشاء حساب</span>
@@ -105,7 +105,7 @@
 
                                 {% if forloop.counter <= 5 %}
                                 <div class="w-8 h-8 rounded-full bg-violet-600 text-white text-sm flex items-center justify-center border-2 border-white">
-                                    {{ req.user.full_name|first }}
+                                    {{ req.user.first_name|first }}
                                 </div>
                             {% endif %}
                             {% endif %}

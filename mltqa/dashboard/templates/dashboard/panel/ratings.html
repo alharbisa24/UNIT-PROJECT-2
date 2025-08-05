@@ -52,7 +52,6 @@
                 <tr>
                 <th class="px-6 py-4">#</th>
                 <th class="px-6 py-4">الاسم</th>
-                <th class="px-6 py-4">رقم الجوال</th>
                 <th class="px-6 py-4">التقييم</th>
                 <th class="px-6 py-4">الفعالية</th>
                 <th class="px-6 py-4">تاريخ الإضافة</th>
@@ -67,10 +66,9 @@
                 <td class="px-6 py-4 text-gray-400">{{ forloop.counter }}</td>
                 <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
-                    <p class="font-medium text-white">{{ rating.request.user.full_name }}</p>
+                    <p class="font-medium text-white">{{ rating.request.user.first_name }} {{ rating.request.user.last_name }}</p>
                     </div>
                 </td>
-                <td class="px-6 py-4 text-gray-400">{{ rating.request.user.phone }}</td>
                 <td class="px-6 py-4 text-gray-400">{{ rating.stars }}/5 <i class="fa fa-star text-yellow-500"></i>
                 <br>
                 {{ rating.comment }}

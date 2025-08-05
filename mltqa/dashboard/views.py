@@ -6,8 +6,6 @@ from django.http import HttpRequest
 from . import forms,models
 from home import models as HomeModels
 from dotenv import load_dotenv
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.hashers import check_password
 from datetime import timedelta
 from django.utils.timezone import now
 from .firebase_config import bucket
@@ -18,7 +16,10 @@ from datetime import datetime
 import google.generativeai as genai
 import os
 from django.core.paginator import Paginator
-from django.db.models import Avg
+from django.db.models import Avg,Q,F
+from django.contrib.auth import authenticate,login,logout
+from django.db import IntegrityError
+from django.contrib.auth.models import User
 
 load_dotenv()
 
@@ -28,26 +29,24 @@ genai.configure(api_key=gemini_api_key)
 
 model = genai.GenerativeModel('gemini-2.0-flash')
 
+
 def dashboard_login_view(request:HttpRequest):
 
     if request.method == "POST":
         form = forms.LoginForm(request.POST)
-        email = request.POST['email']
+        username = request.POST['username']
         password = request.POST['password']
 
         if form.is_valid():
             try:
-                admin = models.Admin.objects.get(email=email)
-                if check_password(password, admin.password):
-                    response = redirect("dashboard:dashboard_home_view")
-                    response.set_cookie("admin", admin.id, max_age=60*60*24)
-
-                    return response
-                else:
-                    form.add_error('password', 'كلمة المرور غير صحيحة ')
-            except models.Admin.DoesNotExist:
-                    form.add_error('email', 'البريد الالكتروني غير موجود ')
-
+                user = authenticate(request, username=username, password=password)
+                if user and user.is_superuser:
+                    login(request, user)
+                    return redirect("dashboard:dashboard_home_view")
+                
+            except IntegrityError as e:
+                    form.add_error('username', 'خطا في اسم السمتخدم او كلمة المرور')
+                    print(e)
 
     else:
         form = forms.LoginForm()
@@ -58,17 +57,17 @@ def dashboard_login_view(request:HttpRequest):
 
 
 def dashboard_home_view(request:HttpRequest):
-    if not 'admin' in request.COOKIES:
+    if not request.user.is_authenticated:
         return redirect('dashboard:dashboard_login_view')
     
-    admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+    admin = request.user
     number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     total_events = models.Event.objects.count()
     total_active_events = models.Event.objects.filter(is_active=True).count()
     total_expired_events = models.Event.objects.filter(is_active=False).count()
-    total_users= HomeModels.User.objects.count()
+    total_users= User.objects.filter(is_superuser=False).count()
     total_requests = HomeModels.Request.objects.count()
-    total_admins= models.Admin.objects.count()    
+    total_admins= User.objects.filter(is_superuser=True).count()
     total_ratings= HomeModels.Rating.objects.count()    
 
 
@@ -115,11 +114,11 @@ def generateRandom(num: int):
     return result
 
 def dashboard_events_view(request:HttpRequest):
-    if not 'admin' in request.COOKIES:
+    if not request.user.is_authenticated:
         return redirect('dashboard:dashboard_login_view')
     
     success = False
-    admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+    admin = request.user
 
     if request.method == "POST":
         form = forms.EventForm(request.POST, request.FILES)
@@ -182,7 +181,7 @@ def dashboard_events_view(request:HttpRequest):
 
 
 def dashboard_requests_view(request:HttpRequest):
-    if not 'admin' in request.COOKIES:
+    if not request.user.is_authenticated:
         return redirect('dashboard:dashboard_login_view')
     events =  models.Event.objects.all()
     requests = HomeModels.Request.objects.all()
@@ -192,7 +191,7 @@ def dashboard_requests_view(request:HttpRequest):
     event = request.GET.get("event", "").strip()
 
     if search:
-        requests = requests.filter(user__full_name__contains=search)
+        requests = requests.filter(user__first_name__contains=search)
 
     if status:
         requests = requests.filter(status=status)
@@ -216,7 +215,7 @@ def dashboard_requests_view(request:HttpRequest):
 
     if request.POST:
         pass
-    admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+    admin = request.user
     number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     return render(request, "dashboard/panel/requests.html",{
                 "admin": admin,
@@ -265,25 +264,26 @@ def dashboard_request_reject_view(request:HttpRequest, id:int):
 
 
 def dashboard_ratings_view(request:HttpRequest):
-    if not 'admin' in request.COOKIES:
+    if not request.user.is_authenticated:
         return redirect('dashboard:dashboard_login_view')
     
 
 
 def dashboard_users_view(request:HttpRequest):
-    if not 'admin' in request.COOKIES:
+    if not request.user.is_authenticated:
         return redirect('dashboard:dashboard_login_view')
     success = False
  
     if "search" in request.GET and len(request.GET["search"]) >= 3:
-        users = HomeModels.User.objects.filter(full_name__contains=request.GET["search"])
+        users = User.objects.filter(Q(first_name__contains=request.GET["search"]) and Q(is_superuser=False))
     else:
         try:
-            users = HomeModels.User.objects.all()
-        except HomeModels.User.DoesNotExist:
-            print("error")
+            users = User.objects.filter(is_superuser=False)
+        except Exception as e:
+            print(e)
+            return redirect("dashboard:home_view")
 
-    admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+    admin = request.user
     number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     deleted = request.GET.get('deleted', "false")
     return render(request, "dashboard/panel/users.html",{
@@ -294,7 +294,7 @@ def dashboard_users_view(request:HttpRequest):
     })
 
 def dashboard_users_delete_view(request:HttpRequest,id:int):
-    user = HomeModels.User.objects.get(pk=id)
+    user = User.objects.get(pk=id)
 
     if user:
         user.delete()
@@ -302,7 +302,7 @@ def dashboard_users_delete_view(request:HttpRequest,id:int):
 
 
 def dashboard_admins_view(request: HttpRequest):
-    if not 'admin' in request.COOKIES:
+    if not request.user.is_authenticated:
         return redirect('dashboard:dashboard_login_view')
     success = False
  
@@ -314,17 +314,22 @@ def dashboard_admins_view(request: HttpRequest):
                 form.add_error('password', 'كلمات المرور غير متطابقة')
                 form.add_error('confirm_password', 'كلمات المرور غير متطابقة')
                 
-            elif len(models.Admin.objects.filter(email=request.POST['email'])) > 0:
+            elif len(User.objects.filter(email=request.POST['email'])) > 0:
                 form.add_error('email', 'البريد الالكتروني موجود مسبقا')
 
+            elif len(User.objects.filter(username=request.POST['username'])) > 0:
+                form.add_error('email', 'اسم المستخدم موجود مسبقا')
 
                 
             else:
-                new_admin = models.Admin(
-                    full_name=request.POST['full_name'],
+                new_admin = User.objects.create_superuser(
+                    first_name=request.POST['first_name'],
+                    last_name=request.POST['last_name'],
+                    username=request.POST['username'],
                     email=request.POST['email'],
-                    password=make_password(request.POST['password'])
+                    password=request.POST['password']
                 )
+                
                 new_admin.save()
                 success = True
                 form = forms.AdminForm() 
@@ -333,14 +338,14 @@ def dashboard_admins_view(request: HttpRequest):
         form = forms.AdminForm()
 
     if "search" in request.GET and len(request.GET["search"]) >= 3:
-        admins = models.Admin.objects.filter(full_name__contains=request.GET["search"])
+        admins = User.objects.filter(Q(first_name__contains=request.GET["search"]) and Q(is_superuser=True))
     else:
         try:
-            admins = models.Admin.objects.all()
-        except models.Admin.DoesNotExist:
+            admins = User.objects.filter(is_superuser=True)
+        except User.DoesNotExist:
             print("error")
 
-    admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+    admin = request.user
     number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     return render(request, "dashboard/panel/admins.html", {
         'admins' : admins,
@@ -369,7 +374,7 @@ def dashboard_event_edit_view(request:HttpRequest, id:int):
 
         form = forms.EventForm()
         if event:
-            admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+            admin = request.user
             number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
             if request.method == "POST":
                     form = forms.EventForm(request.POST, request.FILES)
@@ -422,7 +427,7 @@ def dashboard_event_edit_view(request:HttpRequest, id:int):
 def dashboard_event_requests_view(request:HttpRequest, id:int):
     try:
         event = models.Event.objects.get(pk=id)
-        admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+        admin = request.user
         number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
         event.startdate_ar = format_date(event.start_datetime)
         event.enddate_ar = format_date(event.end_datetime)
@@ -438,7 +443,7 @@ def dashboard_event_requests_view(request:HttpRequest, id:int):
         event_requests = event.event_requests.filter(status__in=["accepted", "attend", 'absent'])
         search = request.GET.get("search", "").strip()
         if search:
-                event_requests = event_requests.filter(user__full_name__contains=search)
+                event_requests = event_requests.filter(user__first_name__contains=search)
 
         return render(request, "dashboard/panel/event_requests.html", {
             'admin' : admin,
@@ -457,8 +462,8 @@ def dashboard_event_requests_view(request:HttpRequest, id:int):
 
 def dashboard_user_requests_view(request:HttpRequest, id:int):
     try:
-        user = HomeModels.User.objects.get(pk=id)
-        admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+        user = User.objects.get(pk=id)
+        admin = request.user
         number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
         
         user_requests = user.user_requests.all()
@@ -489,7 +494,7 @@ def dashboard_user_requests_view(request:HttpRequest, id:int):
                 
             })
 
-    except HomeModels.User.DoesNotExist:
+    except User.DoesNotExist:
         return redirect('dashboard:dashboard_users_view')
 
 
@@ -517,7 +522,7 @@ def delete_image_from_firebase(image_url):
         print(" فشل حذف الصورة:", e)
 
 def dashboard_admin_delete_view(request:HttpRequest,id:int):
-    admin = models.Admin.objects.get(pk=id)
+    admin = User.objects.get(pk=id)
     if admin:
         admin.delete()
         return redirect('dashboard:dashboard_admins_view')
@@ -573,12 +578,12 @@ def dashboard_attend_request_view(request: HttpRequest):
     return redirect(redirect_url)
 
 def dashboard_ratings_view(request:HttpRequest):
-    if not 'admin' in request.COOKIES:
+    if not request.user.is_authenticated:
         return redirect('dashboard:dashboard_login_view')
  
  
     if "search" in request.GET and len(request.GET["search"]) >= 3:
-        ratings = HomeModels.Rating.objects.filter(request__user__full_name__contains=request.GET["search"])
+        ratings = HomeModels.Rating.objects.filter(request__user__first_name__contains=request.GET["search"])
     else:
         try:
             ratings = HomeModels.Rating.objects.all()
@@ -591,7 +596,7 @@ def dashboard_ratings_view(request:HttpRequest):
         rating.event.enddate_ar = format_date(rating.event.end_datetime)
 
 
-    admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+    admin = request.user
     number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     return render(request, "dashboard/panel/ratings.html", {
         'ratings' : ratings,
@@ -623,7 +628,7 @@ def dashboard_ratings_update_status_view(request:HttpRequest,id:int):
 
 
 def ai_recommendations_view(request:HttpRequest):
-    admin = models.Admin.objects.get(pk=request.COOKIES.get('admin'))
+    admin = request.user
     number_of_new_requests = HomeModels.Request.objects.filter(created_at__gte=now() - timedelta(days=2)).filter(status='waiting').count()
     total_events = HomeModels.Event.objects.count()
     total_requests = HomeModels.Request.objects.count()

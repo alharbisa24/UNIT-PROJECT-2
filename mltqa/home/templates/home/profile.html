@@ -10,10 +10,10 @@
     <div class="flex flex-col md:flex-row items-center justify-between">
       <div class="flex items-center gap-4 mb-4 md:mb-0">
         <div class="bg-blue-600 text-white w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold ">
-          {{ user.full_name|first }}
+          {{ user.first_name|first }}
         </div>
         <div class="text-center md:text-right">
-          <h1 class="text-2xl lg:text-3xl font-bold">{{ user.full_name }}</h1>
+          <h1 class="text-2xl lg:text-3xl font-bold">{{ user.first_name }}{{user.last_name}}</h1>
           <p class="text-blue-100">{{ user.email }}</p>
         </div>
       </div>
@@ -97,19 +97,19 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <p class="text-gray-500 text-sm mb-1">الاسم الكامل</p>
-              <p class="text-gray-800 font-medium">{{ user.full_name }} </p>
+              <p class="text-gray-800 font-medium">{{ user.first_name }} {{user.last_name}} </p>
             </div>
             <div>
               <p class="text-gray-500 text-sm mb-1">البريد الإلكتروني</p>
               <p class="text-gray-800 font-medium">{{ user.email }}</p>
             </div>
             <div>
-              <p class="text-gray-500 text-sm mb-1">رقم الجوال</p>
-              <p class="text-gray-800 font-medium">{{ user.phone }}</p>
+              <p class="text-gray-500 text-sm mb-1">اسم المستخدم</p>
+              <p class="text-gray-800 font-medium">{{ user.username }}</p>
             </div>
             <div>
               <p class="text-gray-500 text-sm mb-1">تاريخ التسجيل</p>
-              <p class="text-gray-800 font-medium">{{ user.created_at|date:"Y/m/d" }}</p>
+              <p class="text-gray-800 font-medium">{{ user.date_joined|date:"Y/m/d" }}</p>
             </div>
           </div>
         </div>
@@ -119,20 +119,24 @@
             {% csrf_token %}
 
             <div>
-              <label class="block text-gray-500 text-sm mb-1" for="full_name">اسم الكامل</label>
-              <input type="text" name="full_name" id="full_name" value="{{ user.full_name }}" 
+              <label class="block text-gray-500 text-sm mb-1" for="first_name">اسم الاول</label>
+              <input type="text" name="first_name" id="first_name" value="{{ user.first_name }}" 
+                     class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-gray-500 text-sm mb-1" for="last_name">اسم الاخير</label>
+              <input type="text" name="last_name" id="last_name" value="{{ user.last_name }}" 
+                     class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-gray-500 text-sm mb-1" for="email">اسم المستخدم</label>
+              <input type="text" name="username" id="username" value="{{ user.username }}" 
                      class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div>
               <label class="block text-gray-500 text-sm mb-1" for="email">البريد الإلكتروني</label>
               <input type="email" name="email" id="email" value="{{ user.email }}" 
                      class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            <div>
-              <label class="block text-gray-500 text-sm mb-1" for="phone">رقم الجوال</label>
-              <input type="tel" name="phone" id="phone" value="{{ user.phone }}" 
-                     class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                     placeholder="05XXXXXXXX">
             </div>
             <div class="md:col-span-2 flex justify-end gap-2 mt-4">
               <button type="button" id="cancel_edit_button" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">

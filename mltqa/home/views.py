@@ -1,12 +1,17 @@
 from django.shortcuts import render,redirect
 from django.http import HttpRequest
 from dashboard.models import *
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from .models import *
 from django.utils import timezone
 from . import forms
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from django.core.paginator import Paginator
+from django.contrib import messages
+
 
 def format_date(dt):
     local_dt = timezone.localtime(dt)
@@ -21,10 +26,8 @@ def format_date(dt):
     return f"{day} {month} {year}"
 
 def home_view(request:HttpRequest):
-    if 'user' in request.COOKIES:
-        user = User.objects.get(pk=request.COOKIES.get('user'))
-    else: 
-         user = None
+  
+
     events = Event.objects.all().order_by('-created_at')[:3]
     
     for event in events:
@@ -36,15 +39,11 @@ def home_view(request:HttpRequest):
 
     return render(request,"home/home.html", {
         "events": events,
-        "user":user
     })
 
 
 def events_view(request:HttpRequest):
-    if 'user' in request.COOKIES:
-        user = User.objects.get(pk=request.COOKIES.get('user'))
-    else:
-        user = None
+ 
     events = Event.objects.all().order_by('-created_at')
     
     for event in events:
@@ -60,15 +59,11 @@ def events_view(request:HttpRequest):
 
     return render(request,"home/allevents.html", {
              "events": events,
-        "user":user ,
         "page_obj":page_obj
     })
 
 def event_details_view(request:HttpRequest, id:int):
-    if 'user' in request.COOKIES:
-        user = User.objects.get(pk=request.COOKIES.get('user'))
-    else: 
-         user = None
+  
     try: 
         event = Event.objects.get(pk=id)
         event_ratings = event.event_ratings.filter(status=True)
@@ -87,16 +82,17 @@ def event_details_view(request:HttpRequest, id:int):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    user_has_request = Request.objects.filter(event=event, user=user).exists()
+    if request.user.is_authenticated:
+        user_has_request = Request.objects.filter(event=event, user=request.user).exists()
+    else:
+        user_has_request= False
 
     return render(request,"home/event_details.html",{
         "event":event,
         "event_ratings":event_ratings,
         "success": success,
         "error":error,
-        "user":user,
         'page_obj': page_obj,
-
         "user_has_request": user_has_request
 
 
@@ -106,17 +102,18 @@ def event_details_view(request:HttpRequest, id:int):
 def login_view(request:HttpRequest):
     if request.method == "POST":
             form = forms.LoginForm(request.POST)
-            email = request.POST['email']
+            username = request.POST['username']
             password = request.POST['password']
 
             if form.is_valid():
                 try:
-                    user = User.objects.get(email=email)
-                    if check_password(password, user.password):
-                        response = redirect("home:home_view")
-                        response.set_cookie("user", user.id, max_age=60*60*24, httponly=True)
+                    user = authenticate(request, username=username, password=password)
 
-                        return response
+                    if user:
+                        login(request, user)
+                        return redirect("home:home_view")
+
+
                     else:
                         form.add_error('password', 'كلمة المرور غير صحيحة ')
                 except User.DoesNotExist:
@@ -143,16 +140,18 @@ def register_view(request:HttpRequest):
             elif len(User.objects.filter(email=request.POST['email'])) > 0:
                 form.add_error('email', 'البريد الالكتروني موجود مسبقا')
 
-            elif len(User.objects.filter(phone=request.POST['phone'])) > 0:
-                form.add_error('email', 'رقم الجوال موجود مسبقا')
+
+            elif len(User.objects.filter(username=request.POST['username'])) > 0:
+                form.add_error('username', 'اسم المستخدم موجود مسبقا')
 
                 
             else:
-                new_user = User(
-                    full_name=request.POST['full_name'],
+                new_user = User.objects.create_user(
+                    first_name=request.POST['first_name'],
+                    last_name=request.POST['last_name'],
+                    username=request.POST['username'],
                     email=request.POST['email'],
-                    phone=request.POST['phone'],
-                    password=make_password(request.POST['password'])
+                    password=request.POST['password']
                 )
                 new_user.save()
                 form = forms.RegisterForm() 
@@ -167,20 +166,23 @@ def register_view(request:HttpRequest):
 
 
 def home_logout_view(request:HttpRequest):
+    logout(request)
     response = redirect("home:login_view")
-    response.set_cookie("user", 1, max_age=-3600)
 
     return response
 
 
+@login_required(login_url="/login")
 def book_event_request(request:HttpRequest,id:int):
      try:
+          user = request.user
           event = Event.objects.get(pk=id)
-          user = User.objects.get(pk=request.COOKIES.get('user'))
           existing_request = Request.objects.filter(event=event, user=user).exists()
           if existing_request:
             return redirect(f'/event/{id}?error=exists')
           
+          
+   
           new_request = Request(event=event, user=user,status="waiting")
           new_request.save()
           return redirect(f'/event/{id}?success=True')
@@ -192,7 +194,11 @@ def book_event_request(request:HttpRequest,id:int):
 
 
 def requests_view(request:HttpRequest):
-    user = User.objects.get(pk=request.COOKIES.get('user'))
+    if not request.user.is_authenticated:
+        messages.warning(request,"يجب تسجيل الدخول للوصول الى الملف الشخصي", "bg-orange-300")
+        return redirect("home:login_view")
+
+    user = request.user
     requests = user.user_requests.all()
     for req in requests:
         req.event.startdate_ar = format_date(req.event.start_datetime)
@@ -219,6 +225,7 @@ def cancel_request_view(request:HttpRequest, id:int):
 
 
 def add_rating_for_event(request:HttpRequest, id:int):
+    
     if request.POST:
         comment = request.POST['comment']
         rating = request.POST['rating']
@@ -237,18 +244,23 @@ def add_rating_for_event(request:HttpRequest, id:int):
 
 
 def profile_view(request:HttpRequest):
-    user = User.objects.get(pk=request.COOKIES.get('user'))
+    user = request.user
+
+    if not request.user.is_authenticated:
+        messages.warning(request,"يجب تسجيل الدخول للوصول الى الملف الشخصي", "bg-orange-300")
+        return redirect("home:login_view")
 
     if request.POST:
         email_exists = User.objects.filter(email=request.POST['email']).exclude(pk=user.id).exists()
-        phone_exists = User.objects.filter(phone=request.POST['phone']).exclude(pk=user.id).exists()
-        if email_exists or phone_exists:
+        username_exists = User.objects.filter(username=request.POST['username']).exclude(pk=user.id).exists()
+        if email_exists or username_exists:
             return redirect(f'/profile/?exists=True')
 
         else:
-            user.full_name= request.POST['full_name']
+            user.first_name = request.POST['first_name']
+            user.last_name = request.POST['last_name']
+            user.username = request.POST['username']
             user.email = request.POST['email']
-            user.phone = request.POST['phone']
             user.save()
             return redirect(f'/profile/?updated=True')
 
@@ -271,8 +283,8 @@ def profile_view(request:HttpRequest):
 
 
 def change_password(request:HttpRequest):
-    user = User.objects.get(pk=request.COOKIES.get('user'))
     if request.POST:
+        user = User.objects.get(username=request.user.username)
         if not check_password(request.POST['current_password'], user.password):
             return redirect(f'/profile/?incorrect_pass=True')
         
@@ -280,7 +292,7 @@ def change_password(request:HttpRequest):
             return redirect(f'/profile/?incoorect_passwords_equals=True')
         
         else:
-            user.password = make_password(request.POST['current_password'])
+            user.set_password(request.POST['new_password'])
             user.save()
             return redirect(f'/profile/?updated=True')
 

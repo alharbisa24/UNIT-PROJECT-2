@@ -42,12 +42,12 @@
     <a href="{% url 'home:home_view' %}" class="block md:inline-block my-2"> الرئيسية </a>
     <a href="{% url 'home:events_view' %}" class="block md:inline-block my-2"> الفعاليات </a>
    
-    {% if 'user' in request.COOKIES %}
+    {% if request.user.is_authenticated %}
     <div class="relative inline-block group">
       <button
       class="my-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-3xl transition duration-300 focus:outline-none"
       >
-      مرحبا {{ user.full_name }} !
+      مرحبا {{ user.first_name }} !
       </button>
     
       <div

@@ -18,7 +18,15 @@
     </div>
   {% endif %}
 
+  {% if messages %}
+  {% for message in messages %}
+  <div class="{% if message.tags %} {{ message.tags }} {% endif %} p-4 rounded-md mb-4">
+    {{ message }}  
+  </div>
+
+  {% endfor %}
   
+{% endif %}
     
     <div class="py-8 px-8">
       <form method="post" action="{% url 'home:login_view' %}" class="space-y-6">
@@ -26,14 +34,14 @@
         
     
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-1"> البريد الالكتروني</label>
+          <label for="username" class="block text-sm font-medium text-gray-700 mb-1"> اسم المستخدم</label>
           <div class="relative">
             <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
               <i class="fas fa-user text-gray-400"></i>
             </div>
-            <input id="email" name="email" type="text" required 
+            <input id="username" name="username" type="text" required 
                   class="appearance-none block w-full pr-10 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150" 
-                  placeholder="mail@mail.com">
+                  placeholder="username">
           </div>
         </div>
         

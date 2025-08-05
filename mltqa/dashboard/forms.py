@@ -2,11 +2,22 @@ from django import forms
 
 
 class AdminForm(forms.Form):
-    full_name= forms.CharField(max_length=50,
+    first_name= forms.CharField(max_length=50,
             error_messages={
-            'required': 'يجب ادخال الاسم',
-            'max_length': 'يجب ادخال الاسم بشكل صحيح',
+            'required': 'يجب ادخال الاسم الاول',
+            'max_length': 'يجب ادخال الاسم الاول بشكل صحيح',
         },)
+    last_name= forms.CharField(max_length=50,
+            error_messages={
+            'required': 'يجب ادخال الاسم الاخير',
+            'max_length': 'يجب ادخال الاسم الايخر بشكل صحيح',
+        },)
+    username= forms.CharField(max_length=50,
+            error_messages={
+            'required': 'يجب ادخال اسم المستخدم',
+            'max_length': 'يجب ادخال اسم المستخدم بشكل صحيح',
+        },)
+    
     email = forms.EmailField(max_length=50,
                              error_messages={
             "invalid": "يرجى ادخال بريد الكتروني صحيح",
@@ -29,16 +40,15 @@ class AdminForm(forms.Form):
     )
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(max_length=50,
+    username = forms.CharField(max_length=50,
                              error_messages={
-            'required': 'يجب ادخال الايميل',
-            'max_length': 'يجب ادخال الايميل بشكل صحيح',
+            'required': 'يجب ادخال اسم المستخدم',
+            'max_length': 'يجب ادخال اسم المستخدم بشكل صحيح',
         },)
-    password = forms.CharField(min_length=8,
+    password = forms.CharField(
         widget=forms.PasswordInput,
         error_messages={
             'required': 'يجب ادخال كلمة المرور',
-            'min_length': 'يجب ادخال كلمة المرور بشكل صحيح',
         },
     )
 
