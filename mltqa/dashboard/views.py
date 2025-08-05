@@ -532,10 +532,9 @@ def dashboard_admin_delete_view(request:HttpRequest,id:int):
 
 
 def dashboard_logout_view(request:HttpRequest):
-    response = redirect("dashboard:dashboard_login_view")
-    response.set_cookie("admin", 1, max_age=-3600)
+    logout(request)
+    return redirect("home:login_view")
 
-    return response
 
 
 def dashboard_event_request_status_view(request:HttpRequest, id:int):
