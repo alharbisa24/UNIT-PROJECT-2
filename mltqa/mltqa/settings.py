@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'mltqa.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default='postgresql://mltqa:UTKfn7bWBioAMx1tQaYcR9A1Okjpc8Wg@dpg-d24tq5hr0fns73dfuev0-a/mltqa',
+        default=os.getenv('database_url'),
         conn_max_age=600
     )
     #'default': {
